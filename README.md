@@ -15,9 +15,7 @@
 
 <img src="https://render.githubusercontent.com/render/math?math=\hat{\gamma}=\frac{\displaystyle\sum_{i=1}^{N}u_{1i}u_{2i}^*}{\sqrt{{\sum_{i=1}^{N}\lvert u_{1i} \rvert}^2} \sqrt{{\sum_{i=1}^{N}\lvert u_{2i} \rvert}^2}}">
 
-`$$\hat{\gamma}=\frac{\displaystyle\sum_{i=1}^{N}u_{1i}u_{2i}^*}{\sqrt{{\sum_{i=1}^{N}\lvert u_{1i} \rvert}^2} \sqrt{{\sum_{i=1}^{N}\lvert u_{2i} \rvert}^2}}$$`
-
-with $\hat{\gamma}$ being the coherence estimation, $*$ being the complex conjugate.
+with <img src="https://render.githubusercontent.com/render/math?math=\hat{\gamma}"> being the coherence estimation, `*` being the complex conjugate.
 
 A coherence correction is also discussed. Not sure which implementations consider this, it seems terrain dependent.
 
