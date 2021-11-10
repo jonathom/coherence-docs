@@ -150,3 +150,36 @@ Problems with python bindings, magic thing that worked: `sudo ln -s /usr/lib/x86
 [snap snapyy doc](https://senbox.atlassian.net/wiki/spaces/SNAP/pages/50855941/Configure+Python+to+use+the+SNAP-Python+snappy+interface)
 
 [sar2cube](https://sar2cube.netlify.app/)
+
+```batch
+cmake -D CMAKE_INSTALL_PREFIX=~/OTB/install ../otb/SuperBuild
+cmake -DOTB_USE_QT=OFF
+cmake -DOTB_USE_QT=OFF ../otb/SuperBuild
+make
+sudo apt install swig
+make
+```
+
+* trying SARCoRegistration
+* claims products do not inhibit the same physical space
+* tried out in SNAP, coherence of 2 bursts in IW2, works good, product is a bit coarse but probably as expected..
+
+## try pyroSAR
+
+* "SNAP’s Python API snappy is not used due to installation limitations and processing performance."
+* can run coherence process by first building a graph, then executing it. format "GeoTIFF". ESD not working, around 6 minutes with apply-orbit-file taking up about 18GB of RAM
+* in SNAP for comparison: S1 TOPS coreg instead of Back-geocoding?
+* SNAP needs 3 mins for same workflow..?
+* produces close to same results when coherence window is given
+* actually faster without groups, this might change for longer, more complex workflows..
+* Can I automate IW and burst selection with this github repo? Add a merge step...
+* ESD only needed with more than one burst
+* maybe: create db with S1 scenes, filter db for matching input (what is returned by `load_collection`?), ...
+
+Script: input SLC scene and shapefile, automatic swath and burst selection.
+Run time for 3 bursts over 2 swaths:
+* python: ~25min, ungrouped
+* SNAP: 21min
+* python: 9min, grouped
+apply-orbit-file (applied on the whole file, topsar-split afterwards) and back-geocoding seem to take up the most time.
+**Bottlenecks are: apply-orbit-file on whole scene, all other processes on whole bursts instead of only AOI**
