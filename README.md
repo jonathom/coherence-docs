@@ -181,5 +181,66 @@ Run time for 3 bursts over 2 swaths:
 * python: ~25min, ungrouped
 * SNAP: 21min
 * python: 9min, grouped
+
 apply-orbit-file (applied on the whole file, topsar-split afterwards) and back-geocoding seem to take up the most time.
 **Bottlenecks are: apply-orbit-file on whole scene, all other processes on whole bursts instead of only AOI**
+
+* SAR2CUBE does topsar-split first, apply-orbit-file afterwards -> improves memory demand and processing time, results look exactly the same. while less memory is good, processing time win is capped by the fact that it needs to be run for each subswath then, so only makes things faster to a certain degree, especially if a couple bursts of one swath are used
+* ESD? dual-pol?
+* ESD needed fir interferometry, should be considered for coherence as well
+
+## Trying OTB (basic OTB, no diapotb) Again
+
+* useful ops: 
+  * SARBurstExtraction (aka split)
+  * 
+  * SARCorrectionGrid: computes a deformation grid (needed for coregistration?)
+  * 
+  * SARDeburst
+  * SARFineDeformationGrid (seems useful but unclear whether suitable for SLC, needs SARMultilook)
+  * SARMultilook, multilooks SLC images
+
+## Trying to Execute diapTOB chains via python
+
+* ESD fails with error: `TilesAnalysisImageFilter(0x55bbf55d1bb0): Provided MaxShifts are not consistents. Check the input grid`
+* try with `ESD_iter = 0`: works. was `2` originally. 
+* chain `diapOTB_S1IW.py` gives back orthorectified interferogram and (not orthorectified) coherence image
+* next: measure time with `time python..`, do it on same area:
+  * `pyro11.py` pyroSAR, with grouped workflow and apply-orbit-file only on the bursts, 10x3: real 5m21.896s
+  * `diapOTB_S1IW.py` OTB processing chain, no ESD (it fails), 8x2, additionally produces interferogram: real 5m1.582s
+  * results do not look the same, OTB result much more coherenct but seems less quality, there is a striping effect, fields are often completely coherent (weird). Also has finer ground res.
+  * * SARCorrelationGridFilter(0x55e64e283600): GridSteps range mot a multiple of MLRan.
+  * `func_utils.py :: INFO :: 2021-11-15 15:59:35 (WARNING): Encoding of file (/home/petra/Praktikum_VITO/S1A_IW_SLC__1SDV_20211014T165252_20211014T165319_040118_04C01F_7558.SAFE/measurement/s1a-iw2-slc-vv-20211014t165253-20211014t165318-040118-04c01f-005.tiff) is complex but will be read as a VectorImage of scalar type, with twice the number of bands.`
+
+# 
+* export PROJ_LIB=/usr/share/proj
+* source /home/petra/OTB-7.4.0-Linux64/otbenv.profile
+
+# 
+* `gdalwarp -overwrite -t_srs EPSG:32632 coherence_ortho.tif coherence_ortho_32632.tif`
+
+### otb forum save:
+Dear all,
+
+## Overview
+I want to use OTB to calculate the the coherence of two Sentinel 1 SLC scenes. For that, I am executing the `diapOTB_S1IW.py` chain with the according settings made in the corresponding json (`ex_config_diapOTB_S1IW.json`). I am wondering about where the settings are with which I could influence the coherence calculation.
+
+### Configuration setup
+**My system**: *Ubuntu 20*
+**Version of the OTB**: *7.4*
+**I installed the OTB with**: *the binaries*
+
+## Description of my issue
+My problem is that the result (stored in `/filt/filfPhaCoh.tif` in the `output_dir`) looks significantly different from what I get from ESA SNAP. It seems that coherence is a bit overestimated, and there might also be a striping effect. By some digging I discovered that the parameters `Filtered_Interferogram_mlran` and `Filtered_Interferogram_mlazi`, when set to 10x3 instead of 3x3 (default) improve the coherence (visually by comparison) but still it looks overestimated.
+
+![Screenshot from 2021-11-15 16-37-07|588x500, 100%](upload://yG3HFlU9xYOeD79OhCh4oULakNn.jpeg)
+Coherence calculated by the diapOTB_S1IW chain, with Interferogram window 10x3.
+
+![Screenshot from 2021-11-15 16-36-52|588x500, 100%](upload://wNy0pXE1ECLwUOzPKQIijzDBpXv.jpeg)
+Coherence calculated by the ESA SNAP software (following official tutorial)
+
+Are there more ways to hack into the calculation and influence the coherence calculation? I know it is in the workflow only as a byproduct but how come it is so different from the SNAP result?
+
+Let me know if you have ideas or follow-up questions.
+Thanks in advance,
+Jonathan :slight_smile: 
