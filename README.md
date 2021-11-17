@@ -209,6 +209,24 @@ apply-orbit-file (applied on the whole file, topsar-split afterwards) and back-g
   * coherence improves when I change `"Filtered_Interferogram_mlran" : 10, "Filtered_Interferogram_mlazi" : 3` to 10x3, but is still faulty.
   * no other possibilities found to influence this process, so asked OTB forum.
 
+## Digging into the RAM settings
+Bare in mind that these processes are done only on 3 bursts of the same subswath..
+
+* **OTB** RAm settings can be made in config file of the process in question, executed previously with 2560 MB (~2.5GB), not set: `"optram" : 4096`, observed: max 3.3GB used by `python` process, time: 5min4s (which is a bit faster, because in comparison to the first measurements there is an additional georeferencing taking place)
+* Important to keep in mind is that the process produces interferograms we don't want
+* **SNAP** RAM settings are in `<user>/<install-dir, e.g. esa-snap>/bin/gpt.vmoptions` ([forum thread on more info](https://forum.step.esa.int/t/gpt-and-snap-performance-parameters-exhaustive-manual-needed/8797)), previously `-Xmx16G`, now set to `-Xmx4G`, process takes 5m35s, not much longer than before, with the most time spent on Back-Geocoding (coregistration)
+
+As a intermediate result: OTB is a bit faster, but produces unusable output.. If these errors can be fixed it should be the main option, if not, SNAP is a solid backup.
+
+**important: As to now, SNAP reads .zip and OTB read .tifs in .SAFE folders** 
+
+## Working on TerraScope VM
+
+* Data lies as .zip on TerraScope (`/data/MTDA/CGS_S1/IW/DV/...`), SNAP 8.0 is installed.
+* use `terracatalogueclient` to query for products
+* install `s1-tops-split-analyzer` from github repo clone using `pip install --user .`
+* 
+
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
 * `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`
