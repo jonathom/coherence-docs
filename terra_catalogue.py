@@ -3,7 +3,7 @@ import datetime as dt
 
 catalogue = Catalogue()
 
-mol = {"west": 4.38, "south": 51.21, "east": 4.42, "north": 51.24}
+bbox = {"west": 4.38, "south": 51.21, "east": 4.42, "north": 51.24}
 
 # give one date, find closest acqusition before and after
 event = dt.date(2021, 10, 15) # input
@@ -11,14 +11,14 @@ event = dt.date(2021, 10, 15) # input
 before = event - dt.timedelta(days = 6)
 after = event + dt.timedelta(days = 14)
 
-print(["[CATALOGUE]: starting search for scenes...")
+print("[CATALOGUE]: starting search for scenes...")
 
 # first search
 cat_before = catalogue.get_products(
 	"urn:eop:VITO:CGS_S1_SLC_L1",
 	start = before,
 	end = event,
-	bbox = mol
+	bbox = bbox
 )
 
 prod_before = {"date": None, "id": None, "path": None, 
@@ -29,14 +29,18 @@ for p in cat_before:
 	if prod_before["date"] is None:
 		prod_before["date"] = p.beginningDateTime
 		prod_before["id"]  = p.id
-		prod_before["path"] = "/data/MTDA/CGS_S1/" + p.data[0].href[53:]
+		path = p.data[0].href 
+		iw_index = path.index("IW")
+		prod_before["path"] = "/data/MTDA/CGS_S1/CGS_S1_SLC_L1/" + path[iw_index:]
 		prod_before["orbitDirection"] = p.properties["acquisitionInformation"][1]["acquisitionParameters"]["orbitDirection"]
 		prod_before["relativeOrbitNumber"] = p.properties["acquisitionInformation"][1]["acquisitionParameters"]["relativeOrbitNumber"]
 	else:
 		if p.beginningDateTime > prod_before["date"]:
 			prod_before["date"] = p.beginningDateTime
 			prod_before["id"] = p.id
-			prod_before["path"] = "/data/MTDA/CGS_S1/" + p.data[0].href[53:]
+			path = p.data[0].href 
+			iw_index = path.index("IW")
+			prod_before["path"] = "/data/MTDA/CGS_S1/CGS_S1_SLC_L1/" + path[iw_index:]
 			prod_before["orbitDirection"] = p.properties["acquisitionInformation"][1]["acquisitionParameters"]["orbitDirection"]
 			prod_before["relativeOrbitNumber"] = p.properties["acquisitionInformation"][1]["acquisitionParameters"]["relativeOrbitNumber"]
 		else:
@@ -49,7 +53,7 @@ cat_after = catalogue.get_products(
 	"urn:eop:VITO:CGS_S1_SLC_L1",
 	start = event + dt.timedelta(days = 1),
 	end = after,
-	bbox = mol,
+	bbox = bbox,
 	orbitDirection = prod_before["orbitDirection"],
 	relativeOrbitNumber = prod_before["relativeOrbitNumber"]
 )
@@ -61,20 +65,28 @@ for p in cat_after:
 	if prod_after["date"] is None:
 		prod_after["date"] = p.beginningDateTime
 		prod_after["id"]  = p.id
-		prod_after["path"] = "/data/MTDA/CGS_S1/" + p.data[0].href[53:]
+		path = p.data[0].href 
+		iw_index = path.index("IW")
+		prod_after["path"] = "/data/MTDA/CGS_S1/CGS_S1_SLC_L1/" + path[iw_index:]
 	else:
 		if p.beginningDateTime < prod_after["date"]:
 			prod_after["date"] = p.beginningDateTime
 			prod_after["id"] = p.id
-			prod_after["path"] = "/data/MTDA/CGS_S1/" + p.data[0].href[53:]
+			path = p.data[0].href
+			iw_index = path.index("IW")
+			prod_after["path"] = "/data/MTDA/CGS_S1/CGS_S1_SLC_L1/" + path[iw_index:]
 		else:
 			pass
 			
 print("[CATALOGUE]: found matching scene at: ", prod_after["path"])
 
-# TODO: Copy workflow here
+# s1-tops-split-analyzer
 import stsa
 ana_split = stsa.TopsSplitAnalyzer(target_subswaths=['iw1', 'iw2', 'iw3'])
 ana_split.load_data(zip_path = prod_before["path"])
-# TODO: figure our how to compare boundingbox to ana_split data to extract subswaths and bursts...
+
+# intersect subswaths and bursts with bbox
+ana_split._create_subswath_geometry()
+tops_split = ana_split.df.cx[bbox["west"]:bbox["east"], bbox["south"]:bbox["north"]]
+print("[S1-TOPS-SPLIT]: found the following bursts: \n", tops_split)
 
