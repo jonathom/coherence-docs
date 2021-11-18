@@ -170,7 +170,7 @@ else:
 	
 	   # coherence
 	coh = parse_node("Coherence")
-        coh.parameters["cohWinAz"] = 3
+    coh.parameters["cohWinAz"] = 3
 	coh.parameters["cohWinRg"] = 10
 	coh.parameters["squarePixel"] = "true"
 	coh.parameters["subtractFlatEarthPhase"] = "false"
