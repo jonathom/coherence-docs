@@ -168,7 +168,7 @@ else:
 	geocode.parameters["demName"] = "SRTM 1Sec HGT"
 	workflow.insert_node(geocode, before = [aof.id, aof2.id])
 	
-	   # coherence
+	# coherence
 	coh = parse_node("Coherence")
     coh.parameters["cohWinAz"] = 3
 	coh.parameters["cohWinRg"] = 10
