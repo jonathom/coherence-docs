@@ -225,8 +225,27 @@ As a intermediate result: OTB is a bit faster, but produces unusable output.. If
 * Data lies as .zip on TerraScope (`/data/MTDA/CGS_S1/IW/DV/...`), SNAP 8.0 is installed.
 * use `terracatalogueclient` to query for products
 * install `s1-tops-split-analyzer` from github repo clone using `pip install --user .`
-* 
+* trying to install pyroSAR via `pip install --user pyroSAR`, but `pg_config` can't be found - need to add to path like `export PATH=/usr/include/:$PATH`
 
+full error message
+```
+    Error: pg_config executable not found.
+    
+    pg_config is required to build psycopg2 from source.  Please add the directory
+    containing pg_config to the $PATH or specify the full executable path with the
+    option:
+    
+        python setup.py build_ext --pg-config /path/to/pg_config build ...
+    
+    or with the pg_config option in 'setup.cfg'.
+    
+    If you prefer to avoid building psycopg2 from source, please install the PyPI
+    'psycopg2-binary' package instead.
+```
+
+* logged to terrascope forum...
+  
+  
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
 * `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`
