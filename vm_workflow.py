@@ -96,7 +96,7 @@ print("[S1-TOPS-SPLIT]: found the following bursts: \n", tops_split)
 # create a processing dictionary
 processing_dict = {"IW1": {"min": None, "max": None}, "IW2": {"min": None, "max": None}, "IW3": {"min": None, "max": None}}
 
-for i, row in inter.iterrows():
+for i, row in tops_split.iterrows():
     swath = row["subswath"]
     if processing_dict[swath]["min"] is None:
         processing_dict[swath]["min"] = row["burst"]
@@ -170,7 +170,7 @@ else:
 	
 	# coherence
 	coh = parse_node("Coherence")
-    coh.parameters["cohWinAz"] = 3
+	coh.parameters["cohWinAz"] = 3
 	coh.parameters["cohWinRg"] = 10
 	coh.parameters["squarePixel"] = "true"
 	coh.parameters["subtractFlatEarthPhase"] = "false"
