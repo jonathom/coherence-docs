@@ -1,6 +1,8 @@
 from terracatalogueclient import Catalogue
 import datetime as dt
 
+# processes only VV
+
 # define name of result
 name = "testRun_01"
 
@@ -118,13 +120,13 @@ workflow = parse_recipe('blank')
 
 # reference
 read = parse_node("Read")
-read.parameters["file"] = "/home/petra/Praktikum_VITO/S1A_IW_SLC__1SDV_20211014T165252_20211014T165319_040118_04C01F_7558.zip"
+read.parameters["file"] = prod_before["path"]
 read.parameters["formatName"] = "SENTINEL-1"
 workflow.insert_node(read)
 
 # secondary
 read2 = parse_node("Read")
-read2.parameters["file"] = "/home/petra/Praktikum_VITO/S1B_IW_SLC__1SDV_20211020T165211_20211020T165239_029222_037CCF_4397.zip"
+read2.parameters["file"] = prod_after["path"]
 read2.parameters["formatName"] = "SENTINEL-1"
 workflow.insert_node(read2)
 
@@ -323,11 +325,6 @@ elif len(merge_list) == 1:
     workflow.insert_node(tc, before = "TOPSAR-Deburst")
 
 write = parse_node("Write")
-write.parameters["file"] = "/home/petra/Praktikum_VITO/pyroSAR/pyro11_4GBRAM"
-write.parameters["formatName"] = "GeoTIFF"
-workflow.insert_node(write, before = tc.id)
-
-workflow.write = parse_node("Write")
 write.parameters["file"] = "/data/users/Public/jonathanbahlmann/SNAP_results/" + name
 write.parameters["formatName"] = "GeoTIFF"
 workflow.insert_node(write, before = tc.id)

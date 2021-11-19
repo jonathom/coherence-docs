@@ -243,8 +243,12 @@ full error message
     'psycopg2-binary' package instead.
 ```
 
-* logged to terrascope forum...
-  
+* logged to terrascope forum... received reply:
+* had to install: `sudo yum install -y postgresql-devel`
+* the I could install `pip install --user psycopg2` and `pip install --user pyroSAR`
+* upon running, SNAP error: `qc.sentinel1.eo.esa.int: Name or service not known`, checked in SNAP GUI, same error. Forum suggested updating, which was done before, then Apply-Orbit-File worked in GUI
+* workflow.xml not accepted by GraphBuilder, some Problem with "Coherence" node: `Error: [NodeId: Coherence] org.jblas.NativeBlas.dgemm(...` (brackets and Cs)
+* forum suggests downgrade to SNAP7 or installing libfortran5
   
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
