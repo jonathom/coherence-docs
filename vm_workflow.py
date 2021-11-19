@@ -270,12 +270,14 @@ else:
     aof5 = parse_node("Apply-Orbit-File")
     aof5.parameters["orbitType"] = "Sentinel Restituted (Auto Download)"
     aof5.parameters["polyDegree"] = 3
+    aof5.parameters["continueOnFail"] = "true"
     workflow.insert_node(aof5, before = split5.id)
 
     # apply orbit file 2
     aof6 = parse_node("Apply-Orbit-File")
     aof6.parameters["orbitType"] = "Sentinel Restituted (Auto Download)"
     aof6.parameters["polyDegree"] = 3
+    aof5.parameters["continueOnFail"] = "true"
     workflow.insert_node(aof6, before = split6.id)
 
     # Back-Geocoding
