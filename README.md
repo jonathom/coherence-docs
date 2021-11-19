@@ -316,6 +316,27 @@ Caused: org.esa.snap.core.gpf.OperatorException: org.jblas.NativeBlas.dgemm(CCII
 	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:93)
 	at java.awt.EventDispatchThread.run(EventDispatchThread.java:82)
 ```
+
+[Thread](https://forum.step.esa.int/t/orbit-file-timeout-march-2021/28621/159) for problem with the orbit files:
+
+* My problem:`qc.sentinel1.eo.esa.int: Name or service not known`
+* **updating SNAP**: done in GUI, checked command line aswell via `snap --nosplash --nogui --modules --list`, resulted and version of `org.esa.s1tb.s1tbs.kit` is `8.0.5`
+* try downloads manually via pyroSAR in same script, seems they are put in the correct folders by pyroSAR.. SNAP might not find them, like so:
+
+```
+from pyroSAR.S1 import OSV
+
+osvdir = r’\OrbitFiles\S1’
+
+with OSV(osvdir) as osv:
+files = osv.catch(sensor=‘S1B’, osvtype=‘POE’,
+start=‘20170101T000000’, stop=‘20210501T000000’) #define dates here
+osv.retrieve(files)
+```
+
+* error in this thread seems mostly to be that no orbit files are found
+* "Another reason snap might not download the orbit file is that you are working behind a proxy, so you need to setup the proxy by going in snap>bin>gpt.vmoptions and setting the following"
+* file found at `./usr/local/snap/bin/gpt`.. proxy links unclear, clarify next week
   
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
