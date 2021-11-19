@@ -249,6 +249,7 @@ full error message
 * upon running, SNAP error: `qc.sentinel1.eo.esa.int: Name or service not known`, checked in SNAP GUI, same error. Forum suggested updating, which was done before, then Apply-Orbit-File worked in GUI
 * workflow.xml not accepted by GraphBuilder, some Problem with "Coherence" node: `Error: [NodeId: Coherence] org.jblas.NativeBlas.dgemm(...` (brackets and Cs)
 * forum suggests downgrade to SNAP7 or installing libfortran5
+* problem (coherence) persists when going through the process manually
   
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
