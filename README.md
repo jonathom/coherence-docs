@@ -336,7 +336,7 @@ osv.retrieve(files)
 
 * error in this thread seems mostly to be that no orbit files are found
 * "Another reason snap might not download the orbit file is that you are working behind a proxy, so you need to setup the proxy by going in snap>bin>gpt.vmoptions and setting the following"
-* file found at `./usr/local/snap/bin/gpt`.. proxy links unclear, clarify next week
+* file found at `./usr/local/snap/bin/gpt`.. proxy links unclear, clarify next week. `echo $http_proxy` is empty so no proxy is configured on system level, but it might be by the VM?
   
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
