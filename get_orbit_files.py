@@ -1,7 +1,7 @@
 from pyroSAR.S1 import OSV
 import os
 
-osvdir = "/home/petra/Praktikum_VITO/pyroSAR/osv_files"
+osvdir = "/home/jonathanbahlmann/Public/coherence-docs/.snap/auxdata/Orbits/Sentinel-1"
 
 with OSV(osvdir) as osv:
     files = osv.catch(sensor="S1B", osvtype="POE",
