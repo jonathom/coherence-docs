@@ -246,7 +246,35 @@ full error message
 * logged to terrascope forum... received reply:
 * had to install: `sudo yum install -y postgresql-devel`
 * the I could install `pip install --user psycopg2` and `pip install --user pyroSAR`
+
+**OSV error**
+
 * upon running, SNAP error: `qc.sentinel1.eo.esa.int: Name or service not known`, checked in SNAP GUI, same error. Forum suggested updating, which was done before, then Apply-Orbit-File worked in GUI
+
+[Thread](https://forum.step.esa.int/t/orbit-file-timeout-march-2021/28621/159) for problem with the orbit files:
+
+* My problem:`qc.sentinel1.eo.esa.int: Name or service not known`
+* **updating SNAP**: done in GUI, checked command line aswell via `snap --nosplash --nogui --modules --list`, resulted and version of `org.esa.s1tb.s1tbs.kit` is `8.0.5`
+* try downloads manually via pyroSAR in same script, seems they are put in the correct folders by pyroSAR.. SNAP might not find them, like so:
+
+```
+from pyroSAR.S1 import OSV
+
+osvdir = r’\OrbitFiles\S1’
+
+with OSV(osvdir) as osv:
+files = osv.catch(sensor=‘S1B’, osvtype=‘POE’,
+start=‘20170101T000000’, stop=‘20210501T000000’) #define dates here
+osv.retrieve(files)
+```
+
+* error in this thread seems mostly to be that no orbit files are found
+* "Another reason snap might not download the orbit file is that you are working behind a proxy, so you need to setup the proxy by going in snap>bin>gpt.vmoptions and setting the following"
+* file found at `./usr/local/snap/bin/gpt`.. proxy links unclear, clarify next week. `echo $http_proxy` is empty so no proxy is configured on system level, but it might be by the VM?
+
+* apply-orbit-file works when OSV files are downloaded separately, see `get_orbit_files.py`!
+
+**jblas error**
 * workflow.xml not accepted by GraphBuilder, some Problem with "Coherence" node: `Error: [NodeId: Coherence] org.jblas.NativeBlas.dgemm(...` (brackets and Cs)
 * forum suggests downgrade to SNAP7 or installing libfortran5
 * problem (coherence) persists when going through the process manually
@@ -317,26 +345,9 @@ Caused: org.esa.snap.core.gpf.OperatorException: org.jblas.NativeBlas.dgemm(CCII
 	at java.awt.EventDispatchThread.run(EventDispatchThread.java:82)
 ```
 
-[Thread](https://forum.step.esa.int/t/orbit-file-timeout-march-2021/28621/159) for problem with the orbit files:
-
-* My problem:`qc.sentinel1.eo.esa.int: Name or service not known`
-* **updating SNAP**: done in GUI, checked command line aswell via `snap --nosplash --nogui --modules --list`, resulted and version of `org.esa.s1tb.s1tbs.kit` is `8.0.5`
-* try downloads manually via pyroSAR in same script, seems they are put in the correct folders by pyroSAR.. SNAP might not find them, like so:
-
-```
-from pyroSAR.S1 import OSV
-
-osvdir = r’\OrbitFiles\S1’
-
-with OSV(osvdir) as osv:
-files = osv.catch(sensor=‘S1B’, osvtype=‘POE’,
-start=‘20170101T000000’, stop=‘20210501T000000’) #define dates here
-osv.retrieve(files)
-```
-
-* error in this thread seems mostly to be that no orbit files are found
-* "Another reason snap might not download the orbit file is that you are working behind a proxy, so you need to setup the proxy by going in snap>bin>gpt.vmoptions and setting the following"
-* file found at `./usr/local/snap/bin/gpt`.. proxy links unclear, clarify next week. `echo $http_proxy` is empty so no proxy is configured on system level, but it might be by the VM?
+* with resolved OSV error, process continues to `Back-Geocoding`, but fails with `RuntimeError: Executing processing graph org.jblas.NativeBlas.dgemm(CCIIID[DII[DIID[DII)V`, similar to the error with the Coherence process in SNAP GUI
+* [forum thread](https://forum.step.esa.int/t/error-in-sar-image-corregistration-error-nodeld-createstack-org-jblas-nativeblas-dgemm-cciiid-dii-diid-dii-v/12023?page=2) suggests a problem with `libgfortran3` package, but installing all available libgfortran* (3 not available) packages, nothing changes
+* terrascope forum...
   
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
