@@ -342,6 +342,9 @@ imported are python classes with their functions that organize and bundle functi
 * trying to compare maybe coregistered products?
   * OTB processed bursts 2-4 of IW2, pyroSAR 3-5 of IW2
   * compare burst otb.3 to pyrosar.4 (middle)
+  * note on how I did this: loading into SNAP, zooming on upper right hand corner. SNAP products have bands i, q, and Intensity, diapOTB products have one unidentified band. I take the diapOTB images² to try an Intensity and it seems to work.
+
+Comparison between images by how I believe to interpret the unmarked bands: Rows are Reference, Secondary, Columns are diapOTB, SNAP.
 
 diapOTB                                           | SNAP
 :------------------------------------------------:|:-------------------------------------:
@@ -349,11 +352,66 @@ diapOTB                                           | SNAP
 ![](./img/diapotb_band1_quad_iw2b3_cut.jpg)  |  ![](./img/snap_int_sec_iw2b4_cut.jpg)
 
 
-**Comparison gifs between diapOTB and SNAP coregistered Intensity images. The larger footprint with distortions on the right is SNAP imagery, the other is OTB**
+Comparison gifs between diapOTB and SNAP coregistered Intensity images. The larger footprint with distortions on the right is SNAP imagery, the other is OTB
 
 **Reference Comparison:** | **Secondary Comparison:**
 :--:|:--:
 ![](./img/reference.GIF) | ![](./img/secondary.GIF)
+
+**Result**: The coregistered images contain visible differences between softwares, but they all seem to be correctly coregistered images (internally). Doesn't look like this is the reason for coherence errors.
+
+* then interferogram is build, but the function creating the interferogram is phaseFiltering. So having a look at `/app/otbSARPhaseFiltering.cxx`
+* from `Post_Processing.py`, phaseFiltering is run with `withComplex="false"`, and it seems the original complex image is not given.. maybe I could try to add that?
+* added the `incomplex` parameter to `Post_Processing.py`, getting `TypeError: phaseFiltering() got an unexpected keyword argument 'incomplex'`
+* so function obviously doesn't come directly from `otbSARPhaseFiltering.cxx`, search with `grep -r "inForFiltering"`, get `/python_src/utils/DiapOTB_applications.py`, where it says:
+* ```python
+  This application performs a filtering for phase and coherency bands. 
+  Two kinds of inputs are possible (according to the sensor and mode) : 
+  _ complex conjugate image for S1 SM and Cosmo
+  _ interferogram ML 11 fir S1 IW`
+  ```
+* ```python
+  :param withComplex: A boolean to indicate selected input.     
+  :param inForFiltering: Input for filtering (complex conjugate image or inteferogram).
+  ```
+* ```python
+  appPhaFiltering = otb.Registry.CreateApplication("SARPhaseFiltering")
+    if fUtils.str2bool(withComplex) :
+      appPhaFiltering.SetParameterString("incomplex", inForFiltering)
+    else :
+      appPhaFiltering.SetParameterString("ininterf", inForFiltering)
+  ```
+* so `withComplex` decides whether the operation is done on a conjugated complex or an interferogram, then calls otbApplication
+* maybe find the conjugated complex image and throw it in, see what happens? (the example value for an incomplex is a sentinel swath .tiff)
+* coherence calculation must be done in some part of the imports.. (`.h files`)
+* interesting lines in `otbSARTilesPhaseFilteringFunctor.h`:
+  ```C
+  for (unsigned int k = 0; k < m_SizeTiles*m_SizeTiles; k++)
+	 {
+	   norm = sqrt(FFTInvOut[k][0] * FFTInvOut[k][0] + 
+		       FFTInvOut[k][1] * FFTInvOut[k][1]);
+
+	   // Euclidian division
+	   unsigned int i1 = k/m_SizeTiles; // quotient
+	   unsigned int i2 = k - i1*m_SizeTiles; // remainder
+
+	   if (norm != 0)
+	     {
+	       //TilesResult[k].real( (FFTInvOut[k][0]*wf[i1][i2])/norm );  
+	       //TilesResult[k].imag( (FFTInvOut[k][1]*wf[i1][i2])/norm );
+	       TilesResult[k].real( (FFTInvOut[k][0]*wf[i1][i2]) );  
+	       TilesResult[k].imag( (FFTInvOut[k][1]*wf[i1][i2]) );
+	     }
+  ```
+* .. and others, seems to be the file in which coherence is computed
+* ```C
+    while (!InIt.IsAtEnd())
+     {
+       real = InIt.Get().real();
+       imag = InIt.Get().imag();
+       norm = sqrt(real*real + imag*imag);
+  ```
+* moving on from here: trying to understand what's going on in this C file, where and how coherence is computed and if it is done correctly (maybe cross check with SNAPs Java implementation?), could ask in forum or in institute
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
