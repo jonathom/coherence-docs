@@ -1,0 +1,2 @@
+convert snap_int_sec_IW2b4_.png -crop 1140x770+630+215 snap_int_sec_IW2b4_cut.jpg
+

@@ -293,7 +293,7 @@ osv.retrieve(files)
 * but it works with just gpt (executed from `/home/esa_snap/bin`): `./gpt /home/petra/Praktikum_VITO/pyroSAR/pyro11_apply_orbit_workflow.xml`, but no grouping of course, so takes considerable time (~19.41min) vs 22.31min without pre-applied orbit files.
 * using gpt on VM (executing `usr/local/snap/bin/gpt ./SNAP_workflow.xml` instead of giving path to xml in gpt directory) seems to fail with about the same problem with OSV files as above, even though files are present. This doesn't matter much as gpt is much slower anyway
 
-## error search in diapOTB processing chain
+## investigating errors in diapOTB processing chain
 
 imported are python classes with their functions that organize and bundle functions from diapOTB. diapOTB functions are used throughout the chain, even though the second level apps seem to be available in base OTB as well (SAR* prefix).
 
@@ -338,6 +338,16 @@ imported are python classes with their functions that organize and bundle functi
         1. **phaseFiltering** -> this produces the coherence!: does the filtering for an input interferogram to to obtain a denoising phase.
         2. **addBandInterferogram**: Replace an amplitude for input interferogram and merge it to rebuild three bands (amp, pha and coh)
      2. **orthorectification** (interferogram, func from otb): trivial
+
+* trying to compare maybe coregistered products?
+  * OTB processed bursts 2-4 of IW2, pyroSAR 3-5 of IW2
+  * compare burst otb.3 to pyrosar.4 (middle)
+
+comparison  | diapOTB                                          | SNAP
+:----------:|:------------------------------------------------:|:-------------------------------------:
+reference   |![](./img/diapotb_band1_quadratic_IW2b3_cut.jpg)  |  ![](./img/snap_int_ref_IW2b4_cut.jpg)
+secondary   |![](./img/diapotb_band2_quadratic_IW2b3_cut.jpg)  |  ![](./img/snap_int_sec_IW2b4_cut.jpg)
+
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
