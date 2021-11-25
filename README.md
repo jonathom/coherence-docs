@@ -343,11 +343,17 @@ imported are python classes with their functions that organize and bundle functi
   * OTB processed bursts 2-4 of IW2, pyroSAR 3-5 of IW2
   * compare burst otb.3 to pyrosar.4 (middle)
 
-diapOTB                                          | SNAP
+diapOTB                                           | SNAP
 :------------------------------------------------:|:-------------------------------------:
-![](./img/diapotb_band2_quadratic_IW2b3_cut.jpg)  |  ![](./img/snap_int_ref_IW2b4_cut.jpg)
-![](./img/diapotb_band1_quadratic_IW2b3_cut.jpg)  |  ![](./img/snap_int_sec_IW2b4_cut.jpg)
+![](./img/diapotb_band2_quad_iw2b3_cut.jpg)  |  ![](./img/snap_int_ref_iw2b4_cut.jpg)
+![](./img/diapotb_band1_quad_iw2b3_cut.jpg)  |  ![](./img/snap_int_sec_iw2b4_cut.jpg)
 
+
+**Comparison gifs between diapOTB and SNAP coregistered Intensity images. The larger footprint with distortions on the right is SNAP imagery, the other is OTB**
+**Reference Comparison:**
+![](./img/reference.GIF)
+**Secondary Comparison:**
+![](./img/secondary.GIF)
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
