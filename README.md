@@ -343,10 +343,10 @@ imported are python classes with their functions that organize and bundle functi
   * OTB processed bursts 2-4 of IW2, pyroSAR 3-5 of IW2
   * compare burst otb.3 to pyrosar.4 (middle)
 
-comparison  | diapOTB                                          | SNAP
-:----------:|:------------------------------------------------:|:-------------------------------------:
-reference   |![](./img/diapotb_band1_quadratic_IW2b3_cut.jpg)  |  ![](./img/snap_int_ref_IW2b4_cut.jpg)
-secondary   |![](./img/diapotb_band2_quadratic_IW2b3_cut.jpg)  |  ![](./img/snap_int_sec_IW2b4_cut.jpg)
+diapOTB                                          | SNAP
+:------------------------------------------------:|:-------------------------------------:
+![](./img/diapotb_band2_quadratic_IW2b3_cut.jpg)  |  ![](./img/snap_int_ref_IW2b4_cut.jpg)
+![](./img/diapotb_band1_quadratic_IW2b3_cut.jpg)  |  ![](./img/snap_int_sec_IW2b4_cut.jpg)
 
 
 ## useful commands
