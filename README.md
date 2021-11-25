@@ -324,7 +324,8 @@ imported are python classes with their functions that organize and bundle functi
            1. **SARCorrelationGrid**: computes correlation shifts between two images : shift in range and shift in azimut.
            2. ,**SARDEMGrid**: creates a deformation grid related to the DEM with projections into Master and Slave SAR geometries. The output grid is a VectorImage composed of three values : shift in range, shift in azimut and a number of DEM points for contribution
            3. and **SARCorrectionGrid**: creates a deformation grid by correcting the DEM grid with correlation grid. The output grid is a VectorImage composed of two values : shift in range and shift in azimut
-          The aim is to obtain a fine deformation grid between master and slave SAR images.
+          
+            The aim is to obtain a fine deformation grid between master and slave SAR images.
         1. **coRegistration**: does the coregistration between two SAR images thanks to a deformation grid.
         2. **deramp**: does the deramping or reramping of S1 Iw burst.
         3. **interferogram**: builds the interferogram between two SAR images.
