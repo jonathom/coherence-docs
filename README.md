@@ -320,14 +320,18 @@ imported are python classes with their functions that organize and bundle functi
         2. for sec: **demProjection**: puts a DEM file into SAR geometry and estimates two additional coordinates. In all for each point of the DEM input four components are calculated : C (colunm into SAR image), L (line into SAR image), Z and Y.
   7. DInSAR Chain
      1. gridToInterferogram (ref, sec as input)
-        1. **fineGridDeformation**: executes the geo_grid step with three internal applications : SARCorrelationGrid, SARDEMGrid and SARCorrectionGrid. The aim is to obtain a fine deformation grid between master and slave SAR images.
-        2. **coRegistration**: does the coregistration between two SAR images thanks to a deformation grid.
-        3. **deramp**: does the deramping or reramping of S1 Iw burst.
-        4. **interferogram**: builds the interferogram between two SAR images.
-        5. esd
-        6. esd loop (not used in current runs cause it didn't work)
-        7. **concatenate** (interferograms): seems like it uses concatenate bursts again
-        8. return lists, as above as well
+        1. **fineGridDeformation**: executes the geo_grid step with three internal applications : 
+           1. **SARCorrelationGrid**: computes correlation shifts between two images : shift in range and shift in azimut.
+           2. ,**SARDEMGrid**: creates a deformation grid related to the DEM with projections into Master and Slave SAR geometries. The output grid is a VectorImage composed of three values : shift in range, shift in azimut and a number of DEM points for contribution
+           3. and **SARCorrectionGrid**: creates a deformation grid by correcting the DEM grid with correlation grid. The output grid is a VectorImage composed of two values : shift in range and shift in azimut
+          The aim is to obtain a fine deformation grid between master and slave SAR images.
+        1. **coRegistration**: does the coregistration between two SAR images thanks to a deformation grid.
+        2. **deramp**: does the deramping or reramping of S1 Iw burst.
+        3. **interferogram**: builds the interferogram between two SAR images.
+        4. esd
+        5. esd loop (not used in current runs cause it didn't work)
+        6. **concatenate** (interferograms): seems like it uses concatenate bursts again
+        7. return lists, as above as well
   8. Postprocessing Chain
      1. filtering (ref, sec as input)
         1. **phaseFiltering** -> this produces the coherence!: does the filtering for an input interferogram to to obtain a denoising phase.
