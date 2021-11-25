@@ -285,7 +285,55 @@ osv.retrieve(files)
 * get libgfortran some place else ([thread](https://forum.step.esa.int/t/error-in-applying-ers-orbit-informations/23195/13)) and copy into `/usr/lib`, which didn't get things to work.. also it seems that `libgfortran.so.3` was present in `/usr/lib/lib64` and `/usr/lib64` the whole time..
 * trying to run VITO Coherence process graph in VM SNAP with source products selected gives `org.esa.snap.core.gpf.graph.GraphException`
 * try https://src.fedoraproject.org/rpms/jblas
-  
+
+## find out how much time can be saved by preprocessing in a SNAP workflow
+
+* apply orbit file takes 100 seconds with all RAM
+* but I can't read the BEAM-DIMAP `.dim` into the following workflow.. They can only be added to SNAP, but seems pyroSAR issue
+* but it works with just gpt (executed from `/home/esa_snap/bin`): `./gpt /home/petra/Praktikum_VITO/pyroSAR/pyro11_apply_orbit_workflow.xml`, but no grouping of course, so takes considerable time (~19.41min) vs 22.31min without pre-applied orbit files.
+* using gpt on VM (executing `usr/local/snap/bin/gpt ./SNAP_workflow.xml` instead of giving path to xml in gpt directory) seems to fail with about the same problem with OSV files as above, even though files are present. This doesn't matter much as gpt is much slower anyway
+
+## error search in diapOTB processing chain
+
+imported are python classes with their functions that organize and bundle functions from diapOTB. diapOTB functions are used throughout the chain, even though the second level apps seem to be available in base OTB as well (SAR* prefix).
+
+* What calculation steps are done in what order?
+  1. imports:
+    ```
+    from processings import Pre_Processing
+    from processings import Ground
+    from processings import DInSar
+    from processings import Post_Processing     
+    ```
+  2. parameters from dictionairies
+  3. find EOF files
+  4. Metadata handling, correction
+  5. Preprocessing Chain
+     1. extractToMultilook (ref, then sec)
+        1. **multilook**: creates the multi-look image of a SLC product.
+        2. **deramp**: deramping or reramping of S1 Iw burst.
+        3. **burstExtraction**: consist in extracting a single burst, by selecting only lines and samples of the wanted burst.
+        4. **doppler0**: estimates the value of Doppler 0 for a SAR image. The algorithm is based on the CDE method described into [Estimating the Doppler centroid of SAR data].
+  6. Ground Chain
+     1. demProjectionAndCartesianEstimation (ref, then sec)
+        1. for ref: **cartesianMeanEstimation**: estimates a simulated cartesian mean image thanks to a DEM file.
+        2. for sec: **demProjection**: puts a DEM file into SAR geometry and estimates two additional coordinates. In all for each point of the DEM input four components are calculated : C (colunm into SAR image), L (line into SAR image), Z and Y.
+  7. DInSAR Chain
+     1. gridToInterferogram (ref, sec as input)
+        1. **fineGridDeformation**: executes the geo_grid step with three internal applications : SARCorrelationGrid, SARDEMGrid and SARCorrectionGrid. The aim is to obtain a fine deformation grid between master and slave SAR images.
+        2. **coRegistration**: does the coregistration between two SAR images thanks to a deformation grid.
+        3. **deramp**: does the deramping or reramping of S1 Iw burst.
+        4. **interferogram**: builds the interferogram between two SAR images.
+        5. esd
+        6. esd loop (not used in current runs cause it didn't work)
+        7. **concatenate** (interferograms): seems like it uses concatenate bursts again
+        8. return lists, as above as well
+  8. Postprocessing Chain
+     1. filtering (ref, sec as input)
+        1. **phaseFiltering** -> this produces the coherence!: does the filtering for an input interferogram to to obtain a denoising phase.
+        2. **addBandInterferogram**: Replace an amplitude for input interferogram and merge it to rebuild three bands (amp, pha and coh)
+     2. **orthorectification** (interferogram, func from otb): trivial
+
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
 * `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`
