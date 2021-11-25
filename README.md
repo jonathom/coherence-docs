@@ -350,10 +350,10 @@ diapOTB                                           | SNAP
 
 
 **Comparison gifs between diapOTB and SNAP coregistered Intensity images. The larger footprint with distortions on the right is SNAP imagery, the other is OTB**
-**Reference Comparison:**
-![](./img/reference.GIF)
-**Secondary Comparison:**
-![](./img/secondary.GIF)
+
+**Reference Comparison:** | **Secondary Comparison:**
+:--:|:--:
+![](./img/reference.GIF) | ![](./img/secondary.GIF)
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
