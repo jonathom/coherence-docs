@@ -412,6 +412,8 @@ Comparison gifs between diapOTB and SNAP coregistered Intensity images. The larg
        norm = sqrt(real*real + imag*imag);
   ```
 * moving on from here: trying to understand what's going on in this C file, where and how coherence is computed and if it is done correctly (maybe cross check with SNAPs Java implementation?), could ask in forum or in institute
+* also thought: might be good to compare interferograms, but SNAP has this done through snaphu (external installation)..
+* another area (city) could also tell us more about the coherence error thats happening
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
