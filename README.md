@@ -415,7 +415,7 @@ Comparison gifs between diapOTB and SNAP coregistered Intensity images. The larg
 * also thought: might be good to compare interferograms, but SNAP has this done through snaphu (external installation)..
 * another area (city) could also tell us more about the coherence error thats happening
 
-* **SNAP coherence**: there are wo functions, `calculateCoherence` 8only considers real parts) and `coherence`, of which the latter seems more realistic, but I can't make out everything thats happening..
+* **SNAP coherence**: [code](https://github.com/senbox-org/s1tbx/blob/a1ba1205829debdd056cf96920ce4f320fff1778/s1tbx-op-insar/src/main/java/org/esa/s1tbx/insar/gpf/CoherenceOp.java): there are wo functions, `calculateCoherence` 8only considers real parts) and `coherence`, of which the latter seems more realistic, but I can't make out everything thats happening..
   ```java
             for (k = 0; k < winL; k++) {
                 for (l = minL; l < maxL; l++) {
