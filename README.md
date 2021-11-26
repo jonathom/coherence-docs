@@ -415,6 +415,30 @@ Comparison gifs between diapOTB and SNAP coregistered Intensity images. The larg
 * also thought: might be good to compare interferograms, but SNAP has this done through snaphu (external installation)..
 * another area (city) could also tell us more about the coherence error thats happening
 
+* **SNAP coherence**: there are wo functions, `calculateCoherence` 8only considers real parts) and `coherence`, of which the latter seems more realistic, but I can't make out everything thats happening..
+  ```java
+            for (k = 0; k < winL; k++) {
+                for (l = minL; l < maxL; l++) {
+                    //sum.addi(input.get(k, l));
+                    //power.addi(norms.get(k, l));
+                    int inI = 2 * input.index(k, l);
+                    sum.set(sum.real() + input.data[inI], sum.imag() + input.data[inI + 1]);
+                    power.set(power.real() + norms.data[inI], power.imag() + norms.data[inI + 1]);
+                }
+  ```
+* checking with **SAR2Cube ODC driver implementation**:
+  ```python
+    VV_q_coh = (src.loc[dict(variable='i_VV',time=pair[0])]*src.loc[dict(variable='i_VV',time=pair[1])]+src.loc[dict(variable='q_VV',time=pair[0])]*src.loc[dict(variable='q_VV',time=pair[1])]) / np.sqrt((src.loc[dict(variable='i_VV',time=pair[0])]**2+src.loc[dict(variable='q_VV',time=pair[0])]**2)*(src.loc[dict(variable='i_VV',time=pair[1])]**2+src.loc[dict(variable='q_VV',time=pair[1])]**2))
+    VV_i_coh = (src.loc[dict(variable='i_VV',time=pair[1])]*src.loc[dict(variable='q_VV',time=pair[0])]-src.loc[dict(variable='i_VV',time=pair[0])]*src.loc[dict(variable='q_VV',time=pair[1])]) / np.sqrt((src.loc[dict(variable='i_VV',time=pair[0])]**2+src.loc[dict(variable='q_VV',time=pair[0])]**2)*(src.loc[dict(variable='i_VV',time=pair[1])]**2+src.loc[dict(variable='q_VV',time=pair[1])]**2))
+  ```
+  so basically
+  ```
+    (i_VV[0] * i_VV[1] + q_VV[0] * q_VV[1]) / sqrt((i_VV[0]^2 + q_VV[0]^2) * (i_VV[1]^2 + q_VV[1]^2))
+  ```
+                   
+* trying more urban area -> frankfurt. but needs DEM that I don't have yet. SNAP fails with `RESORB files are no longer available from https://scihub.copernicus.eu/gnss/odata/v1/`...
+* coherence in OTB goes from -.07 to 1.07.. should be [0..1], there must be something wrong.
+
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
 * `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`
