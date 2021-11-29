@@ -339,6 +339,6 @@ from pyroSAR.snap.auxil import groupbyWorkers
 groups = groupbyWorkers('/data/users/Public/jonathanbahlmann/SNAP_results/SNAP_workflow.xml', n=1)
 print(groups)
 
-gpt('/data/users/Public/jonathanbahlmann/SNAP_results/SNAP_workflow.xml', groups = groups, outdir = "/data/users/Public/jonathanbahlmann/SNAP_results")
+gpt('/data/users/Public/jonathanbahlmann/SNAP_results/SNAP_workflow.xml', groups = groups, outdir = "/data/users/Public/jonathanbahlmann/SNAP_results/" + name)
 
 
