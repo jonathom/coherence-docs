@@ -285,6 +285,7 @@ osv.retrieve(files)
 * get libgfortran some place else ([thread](https://forum.step.esa.int/t/error-in-applying-ers-orbit-informations/23195/13)) and copy into `/usr/lib`, which didn't get things to work.. also it seems that `libgfortran.so.3` was present in `/usr/lib/lib64` and `/usr/lib64` the whole time..
 * trying to run VITO Coherence process graph in VM SNAP with source products selected gives `org.esa.snap.core.gpf.graph.GraphException`
 * try https://src.fedoraproject.org/rpms/jblas
+* tried, gives dependency errors and I can't seem to find the packages it needs.. e.g. java-headless seems to be installed with java, and there is no rpmlib
 
 ## find out how much time can be saved by preprocessing in a SNAP workflow
 
