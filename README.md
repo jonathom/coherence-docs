@@ -286,6 +286,12 @@ osv.retrieve(files)
 * trying to run VITO Coherence process graph in VM SNAP with source products selected gives `org.esa.snap.core.gpf.graph.GraphException`
 * try https://src.fedoraproject.org/rpms/jblas
 * tried, gives dependency errors and I can't seem to find the packages it needs.. e.g. java-headless seems to be installed with java, and there is no rpmlib
+* update by jeroen: try to replace jblas
+* jblas found in `/usr/local/snap/s1tbx/modules/ext/` both in `org.jlinda.jlinda-core` and `org.jlinda.jlinda-nest`.
+* saving the existing `jblas.jar` to public dir, append `_nest` and `_core`..
+* nothing changes, same error, so did the same in `home/jonathanbahlmann/.snap...` (find with `sudo find / -name "*jblas*"`)
+* `sudo cp -rf /home/jonathanbahlmann/Downloads/jblas-1.2.5.jar /home/jonathanbahlmann/.snap/system/modules/ext/org.jlinda.jlinda-nest/org-jblas/jblas.jar`
+* 
 
 ## find out how much time can be saved by preprocessing in a SNAP workflow
 
@@ -439,6 +445,15 @@ Comparison gifs between diapOTB and SNAP coregistered Intensity images. The larg
                    
 * trying more urban area -> frankfurt. but needs DEM that I don't have yet. SNAP fails with `RESORB files are no longer available from https://scihub.copernicus.eu/gnss/odata/v1/`...
 * coherence in OTB goes from -.07 to 1.07.. should be [0..1], there must be something wrong.
+
+## Moving on: preprocess with SNAP, calculate coherence on the fly
+
+* OTB won't deliver a correct coherence anytime soon, doesn't have an apply-orbit-file operation
+* SNAP workflow takes it's time, too long for otf.
+* therefore: preprocess in SNAP, hold data, do coherence and maybe post-processing on the fly
+  1. pre-processing worklfow: what should be done?
+  2. coherence process itself (SAR2Cube?)
+  3. post-processing, can it be done before already?
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
