@@ -452,8 +452,28 @@ Comparison gifs between diapOTB and SNAP coregistered Intensity images. The larg
 * SNAP workflow takes it's time, too long for otf.
 * therefore: preprocess in SNAP, hold data, do coherence and maybe post-processing on the fly
   1. pre-processing worklfow: what should be done?
+     1. apply-orbit-file
+     2. split?
+     3. back-geocoding
+     4. deburst
   2. coherence process itself (SAR2Cube?)
-  3. post-processing, can it be done before already?
+  3. post-processing: terrain correction
+
+* set RAM to 4GB (file `pconvert.vmoptions` for processing in SNAP)
+* apply-orbit-file: 120-150sec, using SWAP
+* split: IW1, VV and VH, 13 sec write time
+* back-geodoing: 150sec
+* coherence: 71sec, deburst: 10sec, terrain-correction: 66sec
+* deburst: 68sec, coherence: 66sec, terrain-correction: 63sec
+* coherence doesn't work (doesn't respond) after terrain-correction
+* so we can do deburst beforehand, how about merge? process IW2..
+* merge 26sec
+* coh_merge and merge_coh come out the same -> only terrain correction needs to be done later
+* next: check up on SAR2Cube
+* how should the scenes be coregistered? 
+* SNAP coregistering 3 images leaves the last pair blank, so I guess only 2 possible, products then contain both images.
+* SNAP can save intermediate products as GTIFFs and then continue working with them (that doesn't seem possible with OTB tifs), so bands i, q could be used to extract coregistered data..?
+* TODO: try to extract bands from tif into single tifs to calculate coherence on them
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
