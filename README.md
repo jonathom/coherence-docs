@@ -475,6 +475,30 @@ Comparison gifs between diapOTB and SNAP coregistered Intensity images. The larg
 * SNAP can save intermediate products as GTIFFs and then continue working with them (that doesn't seem possible with OTB tifs), so bands i, q could be used to extract coregistered data..?
 * TODO: try to extract bands from tif into single tifs to calculate coherence on them
 
+## coherence investigation
+
+[What is the difference between coherence and coherency?](https://www.fieldtriptoolbox.org/faq/what_is_the_difference_between_coherence_and_coherency/)
+
+“Coherency” is the normalized cross-spectrum at a specific frequency, i.e. for two signals A and B it is defined as Cab/sqrt(Pa _ Pb) or equivalent Cab/sqrt(Caa _ Cbb). Coherency is a complex-valued number with a magnitude (or “modulus”) smaller than or equal to 1 and an angle corresponding to the phase lag between the signals.
+
+The modulus of the coherency is known as the “coherence”. The coherence is a real-valued number between 0 and 1. Note that it is also not uncommon in scientific publications to report the magnitude-squared coherence.
+
+[Wikipedia "" says](https://en.wikipedia.org/wiki/Coherence_(signal_processing))
+
+The coherence (sometimes called magnitude-squared coherence) between two signals x(t) and y(t) is a real-valued function.
+
+[formula]
+
+where Gxy(f) is the Cross-spectral density between x and y, and Gxx(f) and Gyy(f) the autospectral density of x and y respectively. The magnitude of the spectral density is denoted as |G|. Given the restrictions noted above (ergodicity, linearity) the **coherence function estimates the extent to which y(t) may be predicted from x(t)** by an optimum linear least squares function. 
+
+In SNAP there is a build-in help for functions that I need to read through, very interesting stuff
+
+* the "Cross Correlation" op in coregistration (unsure if part of S1 TOPS coreg) uses coherence in "fine registration" step. it is maximized for optimal image alignment.
+* "Back-Geocoding": In resampling the slave images into master frame, **deramp** and **demodulation** are performed first to the slave image, then the truncated-sinc interpolation is performed. Finally, the **reramp** and **remodulation** are applied to the interpolated slave image.
+* "ESD" op. calculates offsets in range and azimuth for the whole image. has option to not write target products but write offset to file. *so maybe this offset could be applied to the grid in geocoding?*
+* 
+* also next: how does sar2cube create a stack of all scenes?
+
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
 * `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`
