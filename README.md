@@ -499,6 +499,19 @@ In SNAP there is a build-in help for functions that I need to read through, very
 * 
 * also next: how does sar2cube create a stack of all scenes?
 
+## docker
+`docker run -it -P --name s1tbx_test1 -v /home/jonathanbahlmann/Public/docker:/VM_out -v /data/MTDA:/VM_in mundialis/esa-snap:s1tbx`
+`docker start -i s1tbx_test1`
+```
+RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
+RUN python3 -m ensurepip
+RUN pip3 install --no-cache --upgrade pip setuptools
+```
+`apk add git`
+
+can run gpt via ./usr/local/snap/bin/gpt ./VM_out/SNAP_workflow.xml
+but cant access input files due to symbolic link loops
+
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
 * `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`
