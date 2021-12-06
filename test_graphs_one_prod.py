@@ -26,6 +26,14 @@ split.parameters["firstBurstIndex"] = firstBurstIndex
 split.parameters["lastBurstIndex"] = lastBurstIndex
 workflow.insert_node(split, before = read.id, resetSuccessorSource = False)
 
+# TopSAR Split 2
+split2 = parse_node("TOPSAR-Split")
+split2.parameters["subswath"] = subswath
+split2.parameters["selectedPolarisations"] = ["VV"]
+split2.parameters["firstBurstIndex"] = firstBurstIndex
+split2.parameters["lastBurstIndex"] = lastBurstIndex
+workflow.insert_node(split2, before = read2.id, resetSuccessorSource = False)
+
 # apply orbit file 1
 aof = parse_node("Apply-Orbit-File")
 aof.parameters["orbitType"] = "Sentinel Restituted (Auto Download)"
@@ -33,8 +41,8 @@ aof.parameters["polyDegree"] = 3
 workflow.insert_node(aof, before = split.id)
 
 write = parse_node("Write")
-write.parameters["file"] = "/VM_out/SNAP_res/test_graphs_two_prod"
+write.parameters["file"] = "/VM_out/SNAP_res/test_graphs_two_split"
 write.parameters["formatName"] = "BEAM-DIMAP"
 workflow.insert_node(write, before = aof.id)
 
-workflow.write("/home/petra/Praktikum_VITO/coherence-docs/test_graphs_two_prod.xml")
+workflow.write("/home/petra/Praktikum_VITO/coherence-docs/test_graphs_two_split.xml")

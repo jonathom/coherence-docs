@@ -552,6 +552,7 @@ WARNING: org.esa.s1tbx.sar.gpf.orbits.ApplyOrbitFileOp: Using Sentinel Precise /
 
 * it seems that docker on linux can use as much ram as is available, so why the ram warnings?
 * tring to run one single apply-orbit op, seems to work.
+* testing different workflow in SNAP in docker, a workflow apply-orb-file takes very short, except a second read node is present, very weird behaviour, while the *same result* is calculated
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
