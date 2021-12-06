@@ -12,6 +12,12 @@ read.parameters["file"] = "/VM_out/S1B_IW_SLC__1SDV_20211013T055004_20211013T055
 read.parameters["formatName"] = "SENTINEL-1"
 workflow.insert_node(read)
 
+# secondary
+read2 = parse_node("Read")
+read2.parameters["file"] = "/VM_out/S1A_IW_SLC__1SDV_20211019T055030_20211019T055057_040184_04C279_2606.zip"
+read2.parameters["formatName"] = "SENTINEL-1"
+workflow.insert_node(read2)
+
 # TopSAR Split
 split = parse_node("TOPSAR-Split")
 split.parameters["subswath"] = subswath
@@ -27,8 +33,8 @@ aof.parameters["polyDegree"] = 3
 workflow.insert_node(aof, before = split.id)
 
 write = parse_node("Write")
-write.parameters["file"] = "/VM_out/SNAP_res"
+write.parameters["file"] = "/VM_out/SNAP_res/test_graphs_two_prod"
 write.parameters["formatName"] = "BEAM-DIMAP"
 workflow.insert_node(write, before = aof.id)
 
-workflow.write("/home/petra/Praktikum_VITO/coherence-docs/test_graphs_one_prod.xml")
+workflow.write("/home/petra/Praktikum_VITO/coherence-docs/test_graphs_two_prod.xml")
