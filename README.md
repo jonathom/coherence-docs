@@ -500,6 +500,7 @@ In SNAP there is a build-in help for functions that I need to read through, very
 * also next: how does sar2cube create a stack of all scenes?
 
 ## docker
+
 `docker run -it -P --name s1tbx_test1 -v /home/jonathanbahlmann/Public/docker:/VM_out -v /data/MTDA:/VM_in mundialis/esa-snap:s1tbx`
 `docker start -i s1tbx_test1`
 ```
@@ -511,6 +512,46 @@ RUN pip3 install --no-cache --upgrade pip setuptools
 
 can run gpt via ./usr/local/snap/bin/gpt ./VM_out/SNAP_workflow.xml
 but cant access input files due to symbolic link loops
+
+copied example files to `VM_out` to skip this link issue, execute gpt:
+```
+WARNING: org.esa.s1tbx.sar.gpf.orbits.ApplyOrbitFileOp: Using Sentinel Precise /root/.snap/auxdata/Orbits/Sentinel-1/POEORB/S1B/2021/10/S1B_OPER_AUX_POEORB_OPOD_20211102T112525_V20211012T225942_20211014T005942.EOF.zip instead
+INFO: org.esa.s1tbx.io.sentinel1.Sentinel1Level1Directory: Less than 8K RAM. Using FileCacheImageInputStream
+INFO: org.esa.s1tbx.io.sentinel1.Sentinel1Level1Directory: Less than 8K RAM. Using FileCacheImageInputStream
+INFO: org.esa.s1tbx.io.sentinel1.Sentinel1Level1Directory: Less than 8K RAM. Using FileCacheImageInputStream
+INFO: org.esa.s1tbx.io.sentinel1.Sentinel1Level1Directory: Less than 8K RAM. Using FileCacheImageInputStream
+INFO: org.esa.s1tbx.io.sentinel1.Sentinel1Level1Directory: Less than 8K RAM. Using FileCacheImageInputStream
+INFO: org.esa.s1tbx.io.sentinel1.Sentinel1Level1Directory: Less than 8K RAM. Using FileCacheImageInputStream
+WARNING: org.esa.s1tbx.sar.gpf.orbits.ApplyOrbitFileOp: RESORB files are no longer available from https://scihub.copernicus.eu/gnss/odata/v1/
+OpenSearch: https://scihub.copernicus.eu/gnss/search?q=platformname:Sentinel-1 AND platformnumber:A AND producttype:AUX_POEORB AND beginposition:[2021-10-01T00:00:000Z TO 2021-10-31T24:00:000Z]
+OpenSearch: 31 total results on 1 pages.
+OpenSearch: https://scihub.copernicus.eu/gnss/search?q=platformname:Sentinel-1 AND platformnumber:A AND producttype:AUX_POEORB AND beginposition:[2021-10-01T00:00:000Z TO 2021-10-31T24:00:000Z]
+WARNING: org.esa.s1tbx.sar.gpf.orbits.ApplyOrbitFileOp: Using Sentinel Precise /root/.snap/auxdata/Orbits/Sentinel-1/POEORB/S1A/2021/10/S1A_OPER_AUX_POEORB_OPOD_20211108T122749_V20211018T225942_20211020T005942.EOF.zip instead
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x0000000000002076, pid=208, tid=0x00007f98e3eb3b38
+#
+# JRE version: OpenJDK Runtime Environment (8.0_232-b09) (build 1.8.0_232-b09)
+# Java VM: OpenJDK 64-Bit Server VM (25.232-b09 mixed mode linux-amd64 compressed oops)
+# Derivative: IcedTea 3.14.0
+# Distribution: Custom build (Tue Mar  3 13:24:22 UTC 2020)
+# Problematic frame:
+# C  0x0000000000002076
+#
+# Core dump written. Default location: //core or core.208
+#
+# An error report file with more information is saved as:
+# //hs_err_pid208.log
+#
+# If you would like to submit a bug report, please include
+# instructions on how to reproduce the bug and visit:
+#   https://icedtea.classpath.org/bugzilla
+#
+```
+
+* it seems that docker on linux can use as much ram as is available, so why the ram warnings?
+* tring to run one single apply-orbit op, seems to work.
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
