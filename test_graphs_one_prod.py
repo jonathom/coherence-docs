@@ -40,9 +40,15 @@ aof.parameters["orbitType"] = "Sentinel Restituted (Auto Download)"
 aof.parameters["polyDegree"] = 3
 workflow.insert_node(aof, before = split.id)
 
+# apply orbit file 2
+aof2 = parse_node("Apply-Orbit-File")
+aof2.parameters["orbitType"] = "Sentinel Restituted (Auto Download)"
+aof2.parameters["polyDegree"] = 3
+workflow.insert_node(aof2, before = split2.id)
+
 write = parse_node("Write")
-write.parameters["file"] = "/VM_out/SNAP_res/test_graphs_two_split"
+write.parameters["file"] = "/VM_out/SNAP_res/test_graphs_two_apply"
 write.parameters["formatName"] = "BEAM-DIMAP"
 workflow.insert_node(write, before = aof.id)
 
-workflow.write("/home/petra/Praktikum_VITO/coherence-docs/test_graphs_two_split.xml")
+workflow.write("/home/petra/Praktikum_VITO/coherence-docs/test_graphs_two_apply.xml")
