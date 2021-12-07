@@ -599,7 +599,7 @@ bbox no match (25.10.) (should be the secondary)
 * `test_graphs.xml` adapted to new date, run in
   * ubuntu docker image with complete SNAP: *works*
   * alpine docker image with S1tbx: nothing changes, same error
-  * workflow directly on VM:
+  * workflow directly on VM: nothing changes, same error
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
