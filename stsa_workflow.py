@@ -53,9 +53,6 @@ for p in cat_before:
 
 print("[PROD_BEFORE]: ", prod_before)
 
-for col in cat_before:
-    print(col.properties)
-
 print("[CATALOGUE]: found first scene at: ", prod_before["path"])
 
 # quary for second product given the direction and rel orbit
