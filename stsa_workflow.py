@@ -26,7 +26,8 @@ cat_before = catalogue.get_products(
 	bbox = bbox
 )
 
-print(cat_before)
+for col in cat_before:
+    print(col.properties)
 
 prod_before = {"date": None, "id": None, "path": None, 
 			"orbitDirection": None, "relativeOrbitNumber": None}
