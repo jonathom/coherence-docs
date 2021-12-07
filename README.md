@@ -569,6 +569,12 @@ WARNING: org.esa.s1tbx.sar.gpf.orbits.ApplyOrbitFileOp: Using Sentinel Precise /
 ```
 * seems to work but slave image is empty (0)
 * same result in snap gui
+* investigating with stsa
+
+![](./img/stsa_13_19_october.png)
+This could be the reason why nothing works...
+
+* terracatalogue search needs to be adapted! adding frame number, of course..
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`

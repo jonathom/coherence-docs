@@ -26,6 +26,8 @@ cat_before = catalogue.get_products(
 	bbox = bbox
 )
 
+print(cat_before)
+
 prod_before = {"date": None, "id": None, "path": None, 
 			"orbitDirection": None, "relativeOrbitNumber": None}
 
