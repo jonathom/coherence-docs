@@ -585,6 +585,21 @@ for product in catalgoue:
 
 * so, terracatalogueclient doesn't return the frame number, so another method is needed to find matching scenes
 * pyroSAR metadata also doesn't contain relative frame, but better coordinates
+* look at bbox:
+```
+bbox 13_10 (reference)
+393764.98012799775,6387349.4751091525,851553.584273894,6743824.30620785
+bbox "match" (supposed secondary)
+419927.9547711776,6559959.210547929,884604.5637293987,6923602.247190176
+bbox no match (25.10.) (should be the secondary)
+393600.3386011145,6387400.548599165,851393.3955266426,6743869.555990831
+```
+* maybe extract this via string subset etc?
+* first try this scene (S1B_IW_SLC__1SDV_**20211025**T055004_20211025T055031_029288_037EC2_**4716**) in all failed workflows..
+* `test_graphs.xml` adapted to new date, run in
+  * ubuntu docker image with complete SNAP: *works*
+  * alpine docker image with S1tbx: nothing changes, same error
+  * workflow directly on VM:
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`

@@ -56,7 +56,7 @@ print("[CATALOGUE]: found first scene at: ", prod_before["path"])
 # quary for second product given the direction and rel orbit
 cat_after = catalogue.get_products(
 	"urn:eop:VITO:CGS_S1_SLC_L1",
-	start = event + dt.timedelta(days = 1),
+	start = event + dt.timedelta(days = 10),
 	end = after,
 	bbox = bbox,
 	orbitDirection = prod_before["orbitDirection"],
