@@ -550,9 +550,25 @@ WARNING: org.esa.s1tbx.sar.gpf.orbits.ApplyOrbitFileOp: Using Sentinel Precise /
 #
 ```
 
+* seems to be a problem with jblas
+
 * it seems that docker on linux can use as much ram as is available, so why the ram warnings?
 * tring to run one single apply-orbit op, seems to work.
 * testing different workflow in SNAP in docker, a workflow apply-orb-file takes very short, except a second read node is present, very weird behaviour, while the *same result* is calculated
+* error above seems to occur as soon as geocoding is added to graph
+
+* trying ubuntu container with full SNAP installation
+* orbit file error (cant find valid file for 13.10.), copy existing files from VM
+```
+..10%....20%....30%....40%....50%....60%....70%....80%....90% done.
+-- org.jblas INFO Deleting /tmp/jblas1073787788575822337/libquadmath-0.so
+-- org.jblas INFO Deleting /tmp/jblas1073787788575822337/libgfortran-4.so
+-- org.jblas INFO Deleting /tmp/jblas1073787788575822337/libjblas_arch_flavor.so
+-- org.jblas INFO Deleting /tmp/jblas1073787788575822337/libjblas.so
+-- org.jblas INFO Deleting /tmp/jblas1073787788575822337
+```
+* seems to work but slave image is empty (0)
+* same result in snap gui
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
