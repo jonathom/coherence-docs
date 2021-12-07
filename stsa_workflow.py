@@ -98,9 +98,3 @@ ana_split_1.to_json('/home/jonathanbahlmann/Public/scenes/stsa_13_10.geojson')
 
 ana_split_2.to_shapefile('/home/jonathanbahlmann/Public/scenes/stsa_19_10.shp')
 ana_split_2.to_json('/home/jonathanbahlmann/Public/scenes/stsa_19_10.geojson')
-
-
-# intersect subswaths and bursts with bbox
-ana_split._create_subswath_geometry()
-tops_split = ana_split.df.cx[bbox["west"]:bbox["east"], bbox["south"]:bbox["north"]]
-print("[S1-TOPS-SPLIT]: found the following bursts: \n", tops_split)
