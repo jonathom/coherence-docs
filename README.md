@@ -575,6 +575,16 @@ WARNING: org.esa.s1tbx.sar.gpf.orbits.ApplyOrbitFileOp: Using Sentinel Precise /
 This could be the reason why nothing works...
 
 * terracatalogue search needs to be adapted! adding frame number, of course..
+```python
+for product in catalgoue:
+    print(col.properties)
+```
+```json
+{'date': '2021-10-10T17:24:56.96Z', 'updated': '2021-10-10T19:07:52.043Z', 'available': '2021-10-10T19:07:56Z', 'published': '2021-10-10T19:07:56Z', 'status': 'ARCHIVED', 'parentIdentifier': 'urn:eop:VITO:CGS_S1_SLC_L1', 'title': 'S1A_IW_SLC__1SDV_20211010T172456_20211010T172524_040060_04BE1E_7AA0', 'identifier': 'urn:eop:VITO:CGS_S1_SLC_L1:S1A_IW_SLC__1SDV_20211010T172456_20211010T172524_040060_04BE1E_7AA0', 'acquisitionInformation': [{'platform': {'platformShortName': 'SENTINEL-1', 'platformSerialIdentifier': 'S1A'}}, {'acquisitionParameters': {'acquisitionType': 'NOMINAL', 'orbitDirection': 'ASCENDING', 'orbitNumber': 40060, 'relativeOrbitNumber': 88, 'polarisationMode': 'D', 'polarisationChannels': 'VV, VH', 'operationalMode': 'IW', 'beginningDateTime': '2021-10-10T17:24:56.96Z', 'endingDateTime': '2021-10-10T17:25:24.037Z'}}], 'productInformation': {'productType': 'SLC', 'availabilityTime': '2021-10-10T19:07:56Z', 'timeliness': 'NRT-3h', 'processingCenter': 'VITO', 'processingDate': '2021-10-10T19:07:52.043Z'}, 'links': {'previews': [{'href': "https://services.terrascope.be/wms/v2?SERVICE=WMS&REQUEST=getMap&VERSION=1.3.0&CRS=EPSG:3857&SRS=EPSG:3857&LAYERS=CGS_S1_GRD_SIGMA0&TIME=2021-10-10&BBOX=438367.91710159264,6421860.720310524,893773.3935885866,6778876.748682227&WIDTH=80&HEIGHT=80&FORMAT=image/png&TRANSPARENT=true", 'type': 'image': ...}]}}
+```
+
+* so, terracatalogueclient doesn't return the frame number, so another method is needed to find matching scenes
+* pyroSAR metadata also doesn't contain relative frame, but better coordinates
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`

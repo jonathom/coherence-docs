@@ -26,9 +26,6 @@ cat_before = catalogue.get_products(
 	bbox = bbox
 )
 
-for col in cat_before:
-    print(col.properties)
-
 prod_before = {"date": None, "id": None, "path": None, 
 			"orbitDirection": None, "relativeOrbitNumber": None}
 
@@ -54,6 +51,8 @@ for p in cat_before:
 		else:
 			pass
 
+print("[PROD_BEFORE]: ", prod_before)
+
 print("[CATALOGUE]: found first scene at: ", prod_before["path"])
 
 # quary for second product given the direction and rel orbit
@@ -65,6 +64,9 @@ cat_after = catalogue.get_products(
 	orbitDirection = prod_before["orbitDirection"],
 	relativeOrbitNumber = prod_before["relativeOrbitNumber"]
 )
+
+for col in cat_after:
+    print(col.properties)
 
 prod_after = {"date": None, "id": None, "path": None}
 
