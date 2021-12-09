@@ -1,3 +1,4 @@
+# create a simple SNAP test graph, used for testing docker containers
 from pyroSAR.snap.auxil import parse_recipe, parse_node
 
 firstBurstIndex = 5

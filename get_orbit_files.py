@@ -1,3 +1,5 @@
+# download orbit files manually if some sort of orbit file error occurs
+# osvdir needs to be changed to the local place for osv files, should be similar
 from pyroSAR.S1 import OSV
 import os
 

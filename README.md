@@ -550,8 +550,7 @@ WARNING: org.esa.s1tbx.sar.gpf.orbits.ApplyOrbitFileOp: Using Sentinel Precise /
 #
 ```
 
-* seems to be a problem with jblas
-
+* seems to be yet again a problem with jblas
 * it seems that docker on linux can use as much ram as is available, so why the ram warnings?
 * tring to run one single apply-orbit op, seems to work.
 * testing different workflow in SNAP in docker, a workflow apply-orb-file takes very short, except a second read node is present, very weird behaviour, while the *same result* is calculated
@@ -567,14 +566,15 @@ WARNING: org.esa.s1tbx.sar.gpf.orbits.ApplyOrbitFileOp: Using Sentinel Precise /
 -- org.jblas INFO Deleting /tmp/jblas1073787788575822337/libjblas.so
 -- org.jblas INFO Deleting /tmp/jblas1073787788575822337
 ```
-* seems to work but slave image is empty (0)
+* **seems to work** but slave image is empty (0)
 * same result in snap gui
 * investigating with stsa
 
 ![](./img/stsa_13_19_october.png)
-This could be the reason why nothing works...
+So of course a coregistration in the non-overlap area results in empty images.
 
-* terracatalogue search needs to be adapted! adding frame number, of course..
+* terracatalogue search needs to be adapted! adding relative frame number, of course..
+* let's see which metadata is there
 ```python
 for product in catalgoue:
     print(col.properties)
@@ -600,15 +600,23 @@ bbox no match (25.10.) (should be the secondary)
   * ubuntu docker image with complete SNAP: *works*
   * alpine docker image with S1tbx: nothing changes, same error
   * workflow directly on VM: nothing changes, same error
+* so the overlap issue (sadly) did not cause all these jbals errors.
+* **summary**: looking at the same relative orbit:
+  * 12 day repeat-pass, same satellite, (almost) exact same frame, sometimes varying number of bursts
+  * 6 day revisit, different satellite, strongly varying overlap (sometimes much, sometimes little of the scene, e.g. only 3 bursts)
+  * coregistration can coregister scenes from the same rel. orbit, returning the overlapping bursts (secondary)
 
-* testing data locally: orbit 146, frame 173, 14.10., 20.10., 26.10., 
-
-* coherence:
+* how to connect preprocessing and coherence validation in a proof of concept?
+* SNAP always saves the ref and sec images to the same file. I want to compute coherence form two secondaries, how to feed that to SNAP?
+* Trying to create a new GeoTIFF from the SNAP output, to calculate coherence only from secondary images
   * coreg into BEAM-DIMAP, deburst BEAM-DIMAP, export to GTIFF, coherence, *works*
-  * coreg into GTIFF, deburst GTIFF, coherence, *works*
-  * coreg into BEAM-DIMAP, deburst GTIFF, exchange bands, coherence
+  * coreg into GTIFF, deburst GTIFF, coherence, *works* (so coherence from gtiff works)
+  * coreg into BEAM-DIMAP, deburst GTIFF, exchange bands, coherence *...*, pending, cause I can't create a GTIFF with gdal that can be read into SNAP (tried `gdal_translate` (extract bands), `gdalbuildvrt` (stack bands), `gdal_translate` (write to `.tif`))
+* [issue at ODC-driver](https://github.com/SARScripts/openeo_odc_driver/issues/2), michele says hdr / img images (from BEAM-DIMAP folder) are used to store coregistered products at ODC backend
+* can I just switch BEAM-DIMAP files maybe?
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
 * `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`
 * `gdalwarp -overwrite -t_srs EPSG:32632 coherence_ortho.tif coherence_ortho_32632.tif`
+* local testing data are orbit 146, frame 173, 14.10., 20.10., 26.10., (just for reference)

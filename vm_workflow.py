@@ -1,3 +1,4 @@
+# full workflow from catalogue query to terrain-corrected coherence graph creation to execution via pyroSAR gpt
 from terracatalogueclient import Catalogue
 import datetime as dt
 
