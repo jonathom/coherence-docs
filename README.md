@@ -601,6 +601,13 @@ bbox no match (25.10.) (should be the secondary)
   * alpine docker image with S1tbx: nothing changes, same error
   * workflow directly on VM: nothing changes, same error
 
+* testing data locally: orbit 146, frame 173, 14.10., 20.10., 26.10., 
+
+* coherence:
+  * coreg into BEAM-DIMAP, deburst BEAM-DIMAP, export to GTIFF, coherence, *works*
+  * coreg into GTIFF, deburst GTIFF, coherence, *works*
+  * coreg into BEAM-DIMAP, deburst GTIFF, exchange bands, coherence
+
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
 * `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`
