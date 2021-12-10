@@ -614,6 +614,20 @@ bbox no match (25.10.) (should be the secondary)
   * coreg into BEAM-DIMAP, deburst GTIFF, exchange bands, coherence *...*, pending, cause I can't create a GTIFF with gdal that can be read into SNAP (tried `gdal_translate` (extract bands), `gdalbuildvrt` (stack bands), `gdal_translate` (write to `.tif`))
 * [issue at ODC-driver](https://github.com/SARScripts/openeo_odc_driver/issues/2), michele says hdr / img images (from BEAM-DIMAP folder) are used to store coregistered products at ODC backend
 * can I just switch BEAM-DIMAP files maybe?
+* seems very incoherent, geographic integrity is lost, doesn't work :/
+* maybe because of `.dim` file?
+* is in folder test_coh
+
+# Preprocessing Approach
+
+* preprocess all scenes on Terrascope backend up to deburst (apply-orbit-file, split, back-geocoding, merge subswaths, deburst), such that the only steps left are coherence and geocoding
+* automatize scene stacking - which scenes belong together - 12 day overlaps perfectly, 6 day only partly sometimes
+* keep track of preprocessed scenes and scene metadata
+* how to deal with the scene reference, how to assemble products for verification?
+* think about running archive, how to integrate new scenes?
+
+* coherence workflow needs to be established, as in SAR2Cube, using the `.img` files of the BEAM-DIMAP format
+* currently no validation can be done, if the files are simply exchanged in the BEAM-DIMAP folder, only garbage is rendered
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
