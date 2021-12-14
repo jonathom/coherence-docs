@@ -629,6 +629,13 @@ bbox no match (25.10.) (should be the secondary)
 * coherence workflow needs to be established, as in SAR2Cube, using the `.img` files of the BEAM-DIMAP format
 * currently no validation can be done, if the files are simply exchanged in the BEAM-DIMAP folder, only garbage is rendered
 
+## progress
+
+* create geojson
+
+![](./img/scenes_overlap_09_2021.png)
+The colourful scenes are from September first and second. The black overlay is a scene found on 07/09.
+
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
 * `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`
