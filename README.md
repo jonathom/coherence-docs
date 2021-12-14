@@ -629,12 +629,21 @@ bbox no match (25.10.) (should be the secondary)
 * coherence workflow needs to be established, as in SAR2Cube, using the `.img` files of the BEAM-DIMAP format
 * currently no validation can be done, if the files are simply exchanged in the BEAM-DIMAP folder, only garbage is rendered
 
-## progress
+## Progress on Part 1: Keeping Track of All Scenes in Order to Process Them
 
-* create geojson
+* use geopandas, save to geojson
+* use stsa to create one row / feature per burst, can `dissolve` by scene id or subswath later
+* arising problem: How to calculate and "remember" which scenes are a stack and should be coregistered
+  * filter for relative orbit
+  * 12 - day: overlap with only one scene on all bursts, should be easy
+  * 6 - day: overlap with 2 scenes from rel-orbit
 
 ![](./img/scenes_overlap_09_2021.png)
-The colourful scenes are from September first and second. The black overlay is a scene found on 07/09.
+The colourful scenes are from September first and second. The black overlay is the overlap of the colourful scenes (from the same relative orbit) and a scene found on 07/09. We would need to store a reminder that we want to coregister the respective bursts of scene black with the "reference" scenes (colourful). 
+
+* original idea was to store an index, e.g. "relative frame = 1", and then see all scenes from one relative frame as a stack
+* only that now a scene can have two relative frames
+* the scene is itself part of a relative frame from the other satellite that is part of a 12-day time series, so it actually has 3 rel-frames..
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
