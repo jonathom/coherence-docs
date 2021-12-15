@@ -652,6 +652,13 @@ relative frames change over time, in fact, they are only a product of the ASF se
 * processing could be done with semi-automatically set reference scenes to which everything is mapped
 * processing could be done burst-wise
 
+![](./img/belgium_vs_bursts.png)
+
+* there are "sudden new scenes" that haven't appeared before, e.g. in france
+* over the years, even the 12-day of single satellites change, there also is track offset
+* because platforms don't have the same footprint, there is always an "uncoregistered rest", should it be cut?
+* **investigate burst-wise**, does it produce the same quality in coregistration? time?
+
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
 * `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`
