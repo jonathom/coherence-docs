@@ -636,6 +636,13 @@ bbox no match (25.10.) (should be the secondary)
 ![](./img/scenes_overlap_09_2021.png)
 The colourful scenes are from September first and second. The black overlay is a scene found on 07/09.
 
+relative frames change over time, in fact, they are only a product of the ASF search vertex:
+> ASF DAAC assigns frames to Sentinel-1 product slices that refer to the same point temporally and geographically. In Vertex, search results then display all the products available over a point and time instead of listing the products for the same point individually. For example, a single Sentinel-1 slice can produce RAW, SLC, GRD and OCN products. ASF DAAC uses the internally generated frame number to group these products into a single Vertex search result and to create InSAR stacks or stacks used to color code Vertex results on the map to indicate approximate quantity of repeating observations with the same relative orbit and frame number.
+
+* sometimes frames seem to change, sometimes not a all..
+* processing could be done with semi-automatically set reference scenes to which everything is mapped
+* processing could be done burst-wise
+
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
 * `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`
