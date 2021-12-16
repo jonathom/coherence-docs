@@ -658,6 +658,16 @@ relative frames change over time, in fact, they are only a product of the ASF se
 * over the years, even the 12-day of single satellites change, there also is track offset
 * because platforms don't have the same footprint, there is always an "uncoregistered rest", should it be cut?
 * **investigate burst-wise**, does it produce the same quality in coregistration? time?
+* **burst-wise coherence leads to weird results**. 2 bursts are possible, good results. results differ from e.g. 7 burst calculation, I'm guessing due to coregistration -> coreg should probably be done on as many bursts as possible, mainly full scenes. 
+* If I set one satellites track as reference scenes than the other one would have non-optimal 12 day coherence
+* With Belgium and France as a area of interest, these problems should be solved hopefully.. 
+* The last half frames on the south end over france can probably be ignored
+* The non-optimal 12 day coherence for e.g. S1A is probably not that big of a problem due to ESD (-> high accuracy)
+* seems like the option to go is as follows: 
+  * 1. choose a satellite, use its ground tracks as reference images
+  * 2. carefully select used scenes with the shape of belgium and france
+  * 3. determine to what extent the other satellite will be processed
+  * 4. solve the storing issue (of storing these relations) 
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
