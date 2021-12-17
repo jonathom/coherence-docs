@@ -668,6 +668,8 @@ relative frames change over time, in fact, they are only a product of the ASF se
   * 2. carefully select used scenes with the shape of belgium and france
   * 3. determine to what extent the other satellite will be processed
   * 4. solve the storing issue (of storing these relations) 
+  
+* todo: get clipping on the way to create base subswaths..
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
