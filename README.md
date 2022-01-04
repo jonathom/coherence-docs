@@ -674,6 +674,10 @@ relative frames change over time, in fact, they are only a product of the ASF se
 ![](./img/non_overlapping_burst.png)
 Important note: This case was observed in the reference `.geojson` (Non-overlapping bursts are of course left out of the dataframe). Preprocessing should be based on min-max bursts instead of *all* bursts that are contained in the file, because that would leave out said middle burst.
 
+Ascending                                         | Descending
+:------------------------------------------------:|:-------------------------------------:
+![](./img/reference_bursts_asc.png)  |  ![](./img/reference_bursts_desc.png)
+
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
 * `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`
