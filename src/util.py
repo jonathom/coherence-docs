@@ -61,26 +61,38 @@ def create_gpd_for_scene(path: str = None, name: str = None, id: str = None, mak
     stsa_geom["rel_orbit"] = pyro.orbitNumber_rel
     
     reg_burst_pattern = [1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9]
-    
+
     if make_regular:
         # leave out additional bursts, however missing bursts will not be replaced and flagged accordingly
         # this corrects only for max 1 extra burst..
         if pyro.orbit == "D":
             stsa_geom = stsa_geom.loc[stsa_geom["burst"] < 10]
         elif pyro.orbit == "A":
-            iw1 = len(stsa_geom.loc[stsa_geom["subswath"] == "IW1"])
-            iw2 = len(stsa_geom.loc[stsa_geom["subswath"] == "IW2"])
-            iw3 = len(stsa_geom.loc[stsa_geom["subswath"] == "IW3"])
-            iw = max(iw1, iw2, iw3) ...
+            liw1 = len(stsa_geom.loc[stsa_geom["subswath"] == "IW1"])
+            if liw1 != 9:
+                print("scene ", id, ", IW1, has ", liw1, " bursts.")  
+            liw2 = len(stsa_geom.loc[stsa_geom["subswath"] == "IW2"])
+            if liw2 != 9:
+                print("scene ", id, ", IW2, has ", liw2, " bursts.")
+            liw3 = len(stsa_geom.loc[stsa_geom["subswath"] == "IW3"])
+            if liw3 != 9:
+                print("scene ", id, ", IW3, has ", liw3, " bursts.")
             # TODO cut only from subswath where the extra bursts lie
-            stsa_geom = stsa_geom.loc[(stsa_geom["burst"] > 1) & (stsa_geom["burst"] < 11)]
         else:
-            print("orbit error")
+            print("create_gpd_for_scene: incorrect orbit given.")
         
     # check whether the scene has a regular burst pattern (no missing, no additional bursts)
     if stsa_geom.loc[:,"burst"].to_list() == [1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9]:
         stsa_geom["regular_burst_pattern"] = 1
     else:
+        # print(path)
+        # print(stsa_geom.loc[:,"burst"].to_list())
         stsa_geom["regular_burst_pattern"] = 0
 
     return(stsa_geom)
+
+# a quick test
+# df = create_gpd_for_scene(path = "/data/MTDA/CGS_S1/CGS_S1_SLC_L1/IW/DV/2021/10/03/S1A_IW_SLC__1SDV_20211003T173237_20211003T173305_039958_04BAA1_14F6/S1A_IW_SLC__1SDV_20211003T173237_20211003T173305_039958_04BAA1_14F6.zip", make_regular = True)
+
+def calculate_overlay(gpd1, gpd2):
+    intersec = gpd.overlay(gpd1, gpd2, how = "intersection")
