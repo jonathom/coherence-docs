@@ -1,3 +1,4 @@
 .snap/
 .ipynb_checkpoints/
 .nfs*
+.Rhistory
