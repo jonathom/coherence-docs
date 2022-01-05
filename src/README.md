@@ -18,3 +18,4 @@ The function `create_reference_scene_json()` in `reference_frames.py` takes a ti
 
 ## Step 2: Orchestrate Preprocessing Worklfow
 
+* known bug of `list_products_by_time` in `preprocessing.py`: if months contain a day or more with no acquisitions, the date handling is shifted by one day. This is however not super important rn.

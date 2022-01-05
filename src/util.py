@@ -3,6 +3,7 @@ import stsa
 import pandas as pd
 import geopandas as gpd
 import sys, os
+import glob
 from contextlib import contextmanager
 
 @contextmanager
@@ -94,6 +95,10 @@ def create_gpd_for_scene(path: str = None, name: str = None, id: str = None, mak
 
 # a quick test
 # df = create_gpd_for_scene(path = "/data/MTDA/CGS_S1/CGS_S1_SLC_L1/IW/DV/2021/10/03/S1A_IW_SLC__1SDV_20211003T173237_20211003T173305_039958_04BAA1_14F6/S1A_IW_SLC__1SDV_20211003T173237_20211003T173305_039958_04BAA1_14F6.zip", make_regular = True)
-
-def calculate_overlay(gpd1, gpd2):
-    intersec = gpd.overlay(gpd1, gpd2, how = "intersection")
+    
+def list_days(list_of_days, month_path):
+    all_file_list = []
+    for day in list_of_days:
+        file_list = glob.glob(os.path.join(month_path, day) + "/*/*.zip")
+        all_file_list.extend(file_list)
+    return all_file_list
