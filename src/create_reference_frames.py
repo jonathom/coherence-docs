@@ -21,7 +21,7 @@ def create_reference_scene_json(start, end, aoi_file: str, ref_bursts_file: str 
     
     # input checks
     if not start - end == dt.timedelta(days = 12):
-        print("[CAUTION]: For full coverage, a 12 day timedelta is recommended.")
+        print("[CAUTION]: For full coverage, a 12 day timedelta is recommended. Timedelta: ", start-end)
     elif (start - end) > dt.timedelta(days = 12):
         print("[ERROR]: This case is not covered here.")
         return
@@ -156,4 +156,4 @@ ref_bursts_file = "/home/jonathanbahlmann/Public/coherence-docs/src/reference_bu
 aoi_file = "/home/jonathanbahlmann/Public/coherence-docs/aoi/belgium_france.geojson"
 
 # usage
-# create_reference_scene_json(start = start, end = end, aoi_file = aoi_file, ref_bursts_file = bursts_file)
+create_reference_scene_json(start = start, end = end, aoi_file = aoi_file, ref_bursts_file = ref_bursts_file)

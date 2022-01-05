@@ -66,7 +66,8 @@ def create_gpd_for_scene(path: str = None, name: str = None, id: str = None, mak
         # leave out additional bursts, however missing bursts will not be replaced and flagged accordingly
         # this corrects only for max 1 extra burst..
         if pyro.orbit == "D":
-            stsa_geom = stsa_geom.loc[stsa_geom["burst"] < 10]
+            # allow a 10th burst, needed in vis inspection
+            stsa_geom = stsa_geom.loc[stsa_geom["burst"] < 11]
         elif pyro.orbit == "A":
             liw1 = len(stsa_geom.loc[stsa_geom["subswath"] == "IW1"])
             if liw1 != 9:
