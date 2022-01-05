@@ -16,7 +16,7 @@ The function `create_reference_scene_json()` in `reference_frames.py` takes a ti
 
 **Step 1 is to execute `create_reference_scene_json()` with a proper timeframe and an AOI `geojson` file.**
 
-## Step 2: Orchestrate Preprocessing Worklfow
+## Step 2: Orchestrate Preprocessing Workflow
 
 **2.1 List products in a given time range**
 
