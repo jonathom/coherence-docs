@@ -146,7 +146,7 @@ def search_for_reference(scene_gpd, ref_gpd, ref_sensor: str = "S1A", epsg: int 
             return [intersection.iloc[area_max]["id_1"]]
         else:
             # 
-            # print(intersection[["id_2", "area", "id_1"]])
+            print(intersection[["id_2", "subswath_2", "burst_2", "area", "id_1", "subswath_1", "burst_1"]])
             burst_size = 1800000000.0
             # filter intersection for geometries larger or equal to the size of a single burst
             intersection = intersection.loc[intersection["area"] > burst_size]
