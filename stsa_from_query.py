@@ -13,7 +13,7 @@ catalogue = Catalogue()
 bbox = {"west": 4.38, "south": 51.21, "east": 4.42, "north": 51.24}
 
 # give one date, find closest acqusition before and after
-event = dt.date(2021, 10, 15) # input
+event = dt.date(2017, 11, 3) # input
 before = event - dt.timedelta(days = 6)
 
 print("[CATALOGUE]: starting search for scenes...")
@@ -62,10 +62,10 @@ after = first_scene_date + dt.timedelta(days = 30)
 cat_after = catalogue.get_products(
 	"urn:eop:VITO:CGS_S1_SLC_L1",
 	start = first_scene_date + dt.timedelta(days = 1),
-	end = after,
-	bbox = bbox,
-	orbitDirection = prod_before["orbitDirection"],
-	relativeOrbitNumber = prod_before["relativeOrbitNumber"]
+	end = after
+	#bbox = bbox,
+	#orbitDirection = prod_before["orbitDirection"],
+	#relativeOrbitNumber = prod_before["relativeOrbitNumber"]
 )
 
 prod_after = {"date": None, "id": None, "path": None}

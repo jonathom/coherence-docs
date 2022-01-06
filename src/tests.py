@@ -1,6 +1,7 @@
 import pytest
+import geopandas as gpd
 
-from util import list_days
+from util import list_days, search_for_reference, create_gpd_for_scene
 from preprocessing import list_products_by_time
 
 def test_list_days():
@@ -28,3 +29,38 @@ def test_list_products_by_time_two_months():
     expected = 16 # usually 18
     products = list_products_by_time(start, end, path)
     assert len(products) == expected
+    
+    
+def test_search_for_reference_S1A():
+    scene_gpd = create_gpd_for_scene(path = "/data/MTDA/CGS_S1/CGS_S1_SLC_L1/IW/DV/2021/04/25/S1A_IW_SLC__1SDV_20210425T172448_20210425T172515_037610_046FB2_F6AB/S1A_IW_SLC__1SDV_20210425T172448_20210425T172515_037610_046FB2_F6AB.zip")
+    ref_gpd = gpd.read_file("reference_bursts.geojson")
+    references = search_for_reference(scene_gpd, ref_gpd)
+    assert set(references) == set(["7AA0"])
+    
+    
+def test_search_for_reference_S1B_none():
+    scene_gpd = create_gpd_for_scene(path = "/data/MTDA/CGS_S1/CGS_S1_SLC_L1/IW/DV/2021/04/17/S1B_IW_SLC__1SDV_20210417T174054_20210417T174130_026510_032A4B_DA8B/S1B_IW_SLC__1SDV_20210417T174054_20210417T174130_026510_032A4B_DA8B.zip")
+    ref_gpd = gpd.read_file("reference_bursts.geojson")
+    references = search_for_reference(scene_gpd, ref_gpd)
+    assert references == []
+    
+    
+def test_search_for_reference_S1B_one():
+    scene_gpd = create_gpd_for_scene(path = "/data/MTDA/CGS_S1/CGS_S1_SLC_L1/IW/DV/2021/04/24/S1B_IW_SLC__1SDV_20210424T173139_20210424T173205_026612_032D91_05D2/S1B_IW_SLC__1SDV_20210424T173139_20210424T173205_026612_032D91_05D2.zip")
+    ref_gpd = gpd.read_file("reference_bursts.geojson")
+    references = search_for_reference(scene_gpd, ref_gpd)
+    assert set(references) == set(["14F6"])
+    
+    
+def test_search_for_reference_S1B_two():
+    scene_gpd = create_gpd_for_scene(path = "/data/MTDA/CGS_S1/CGS_S1_SLC_L1/IW/DV/2021/04/16/S1B_IW_SLC__1SDV_20210416T054955_20210416T055022_026488_03298E_BA6F/S1B_IW_SLC__1SDV_20210416T054955_20210416T055022_026488_03298E_BA6F.zip")
+    ref_gpd = gpd.read_file("reference_bursts.geojson")
+    references = search_for_reference(scene_gpd, ref_gpd)
+    assert set(references) == set(["9F0A", "7BC8"])
+    
+    
+def test_search_for_reference_S1B_old():
+    scene_gpd = create_gpd_for_scene(path = "/data/MTDA/CGS_S1/CGS_S1_SLC_L1/IW/DV/2017/11/28/S1B_IW_SLC__1SDV_20171128T173948_20171128T174015_008485_00F0A7_30C7/S1B_IW_SLC__1SDV_20171128T173948_20171128T174015_008485_00F0A7_30C7.zip")
+    ref_gpd = gpd.read_file("reference_bursts.geojson")
+    references = search_for_reference(scene_gpd, ref_gpd)
+    assert set(references) == set(["AAC4"])

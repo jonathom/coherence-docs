@@ -21,7 +21,7 @@ def suppress_stdout():
             sys.stdout = old_stdout
             
             
-def create_gpd_for_scene(path: str = None, name: str = None, id: str = None, make_regular: bool = False):
+def create_gpd_for_scene(path: str, name: str = None, id: str = None, make_regular: bool = False):
     """Create a geopandas dataframe for a S1 scene.
     
     Metadata is read using pyroSAR. Creates the gpd using stsa.
@@ -102,3 +102,61 @@ def list_days(list_of_days, month_path):
         file_list = glob.glob(os.path.join(month_path, day) + "/*/*.zip")
         all_file_list.extend(file_list)
     return all_file_list
+
+
+def search_for_reference(scene_gpd, ref_gpd, ref_sensor: str = "S1A", epsg: int = 32631):
+    """This function searches for the set of eligible reference scenes for coregistration.
+    
+    If no scene is found, something is off.
+    If one scene is found, it should be from the same sensor.
+    If two scenes are found, it should be a different sensor.
+    :param scene_gpd: gpd of scene to search a reference for
+    :param ref_gpd: gpd with reference bursts
+    :param ref_sensor: sensor of ref_gpd
+    :param epsg: EPSG CRS to convert to for area calculation
+    """
+    epsg_str = 'epsg:' + str(epsg)
+    
+    scene_gpd = scene_gpd.dissolve("subswath", as_index = False)
+    # scene_gpd.to_file("scene_gpd_check_" + str(scene_gpd.iloc[0]["id"]) + ".geojson", driver = "GeoJSON")
+    scene_sensor = scene_gpd.iloc[0]["sensor"]
+    rel_o = scene_gpd.iloc[0]["rel_orbit"]
+    o_dir = scene_gpd.iloc[0]["orbit_direction"]
+    # search in existing table for bursts of the same relative orbit and orbit direction
+    ref_gpd_same_orbit = ref_gpd.loc[(ref_gpd["rel_orbit"] == rel_o) & (ref_gpd["orbit_direction"] == o_dir)]
+    
+    # if scenes from the same orbit are found
+    if not ref_gpd_same_orbit.empty:
+        ref_gpd_same_orbit = ref_gpd_same_orbit.dissolve(["id", "subswath"], as_index = False)
+        
+    # calculate intersection
+    intersection = gpd.overlay(ref_gpd_same_orbit, scene_gpd, how = "intersection") # so id_1 is different each intersection
+    
+    if not intersection.empty:
+        
+        intersection["area"] = intersection.to_crs({'init': epsg_str}).area
+
+        # intersection.to_file("intersection" + str(intersection.iloc[0]["id_2"]) + ".geojson", driver="GeoJSON")
+
+    
+        if scene_sensor == ref_sensor:
+            # only one scene needs to be found, which is the one with biggest overlap
+            area_max = intersection["area"].idxmax()
+            # return id of that scene
+            return [intersection.iloc[area_max]["id_1"]]
+        else:
+            # 
+            # print(intersection[["id_2", "area", "id_1"]])
+            burst_size = 1800000000.0
+            # filter intersection for geometries larger or equal to the size of a single burst
+            intersection = intersection.loc[intersection["area"] > burst_size]
+            # make set of id_1 column
+            ids = set(intersection["id_1"].array)
+            return list(ids)
+            # 1.825593e+09 is in
+            # 2.075e-09 is in, 1.569e-09 (full subswath side intersection) is out
+            # 1.814e-09 is in, one burst, same sensor
+            
+    # when no intersection, return empty array
+    else:
+        return[]
