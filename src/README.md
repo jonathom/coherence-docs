@@ -27,3 +27,7 @@ The function `create_reference_scene_json()` in `reference_frames.py` takes a ti
 * is only designed to be able to get *one day* of data, or like *five days* or *a month* if it works better for testing purposes.
 
 **2.2 make gpd / integrate into gpd of processed bursts**
+
+The `processing.geojson` file is produced here. It contains all bursts that are fed to it via the `list_products_by_time` function (only once). For each burst it contains the reference scene `id` and the range of bursts (`min`, `max`) of the reference scene for that subswath. It is not necessary to relate every scene burst to the exact reference burst because the processing is gonna be subswath - wise anyway.
+
+Next up: putting everything into useful functions, mabe outsource some functionality to util.py.
