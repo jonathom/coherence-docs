@@ -105,9 +105,14 @@ def create_reference_scene_json(start, end, aoi_file: str, ref_bursts_file: str 
                     new_bursts.append(intersecting_bursts)
 
     # when new bursts are found
-    save_new_bursts(new_bursts = new_bursts, create_new_file = create_new_file, old_gpd = ref_bursts,
-                    filename = "reference_bursts.geojson", save_as_scenes = True, 
-                    scenes_filename = "reference_scenes.geojson")
+    if not create_new_file:
+        save_new_bursts(new_bursts = new_bursts, create_new_file = create_new_file, old_gpd = ref_bursts,
+                        filename = "reference_bursts.geojson", save_as_scenes = True, 
+                        scenes_filename = "reference_scenes.geojson")
+    else:
+        save_new_bursts(new_bursts = new_bursts, create_new_file = create_new_file,
+                        filename = "reference_bursts.geojson", save_as_scenes = True, 
+                        scenes_filename = "reference_scenes.geojson")
     return
 
 
@@ -131,8 +136,8 @@ def create_reference_scene_json(start, end, aoi_file: str, ref_bursts_file: str 
 # input time frame in which reference scenes should be defined
 # this should be no longer than 12 days! after 12 days, orbits of a single satellite repeat and ambiguities arise
 # My use case was to collect the base scenes from 1.10 - 12.10.2021, and to add some scenes over france from oct 2020 later on
-start = dt.date(2020, 10, 1)
-end = dt.date(2020, 10, 13)
+start = dt.date(2021, 10, 1)
+end = dt.date(2021, 10, 13)
 ref_bursts_file = "/home/jonathanbahlmann/Public/coherence-docs/src/reference_bursts.geojson"
 aoi_file = "/home/jonathanbahlmann/Public/coherence-docs/aoi/belgium_france.geojson"
 
