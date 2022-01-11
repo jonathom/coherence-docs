@@ -38,3 +38,8 @@ The `processing.geojson` file is produced here. It contains all bursts that are 
 
 ## Step 3: Orchestrate Preprocessing via pyroSAR
 
+* processing will be done in docker containers
+* how to orchestrate? might make sense to do 1 container = 1 coregistration
+* one coreg process per reference_scene over all applicable subswaths (to be able to use SNAP merge to make one subscene again)
+* questions then: where to control docker from? how to register and wait for jobs? 
+* make docker container that can be launched with exactly one job

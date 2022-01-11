@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import sys
 import sys, os
 import pandas as pd
 import geopandas as gpd
