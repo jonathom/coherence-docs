@@ -160,3 +160,239 @@ def search_for_reference(scene_gpd, ref_gpd, ref_sensor: str = "S1A", epsg: int 
     # when no intersection, return empty array
     else:
         return[]
+    
+    
+def save_new_bursts(new_bursts, create_new_file: bool, filename,
+                    old_gpd = None, save_as_scenes: bool = False, scenes_filename: str = None):
+    """A function to save a gpd of bursts.
+    
+    Adding to a new file when create_new_file is True, saving to new file if not.
+    :param new_bursts: gpd of bursts to be added, may be empty
+    :param create_new_file: bool of whether to make a new file
+    :param old_gpd: optional, gpd to add the new bursts to
+    :param filename: filename of old or new file
+    :param save_as_scenes: should the gpd be dissolved into scenes?
+    :param scenes_filename: give filename for probable scenes file
+    """
+    
+    # when new bursts are found
+    if new_bursts:
+        new_bursts_df = gpd.GeoDataFrame(pd.concat(new_bursts, ignore_index = True), crs=new_bursts[0].crs)
+
+        # if a file exists, add to it and rewrite
+        if not create_new_file:
+            print(len(new_bursts_df), " bursts added.")
+            new_bursts_df = old_gpd.append(new_bursts_df, sort = False)
+        else:
+            print(len(new_bursts_df), " bursts found.")
+
+        # write bursts
+        new_bursts_df.to_file(filename, driver = "GeoJSON")
+        if save_as_scenes:
+            # extract scenes and write
+            new_bursts_df.dissolve(["id"], as_index = False).to_file(scenes_filename, driver = "GeoJSON")
+
+    elif not new_bursts:
+        print("nothing added")
+    else:
+        print("[ERROR]: something went wrong: reference_frames.py")
+
+    print("[INFO]: Done looking for new scenes.")
+    return
+
+
+def list_products_by_time(start, end, path: str = "/data/MTDA/CGS_S1/CGS_S1_SLC_L1/IW/DV/"):
+    """This function returns an array of paths of S1 SLC products.
+    
+    The search is temporal and oriented at the TERRASCOPE folder structure.
+    :param start: start time of search in YYYY/mm/dd
+    :param end: end of search in YYYY/mm/dd
+    :param path: path of directory with the scenes
+    """
+    s_month = int(start[5:7])
+    e_month = int(end[5:7])
+    s_day = int(start[8:])
+    e_day = int(end[8:])
+
+    start_folder = path + start[0:7] # year and month, no /
+    end_folder = path + end[0:7]
+
+    # if only in one month
+    if s_month == e_month:
+        start_folder_days = os.listdir(start_folder)[s_day-1:e_day] # list days, from start day : end day
+        list_of_products = list_days(list_of_days = start_folder_days, month_path = start_folder)
+    # no in between month
+    elif s_month + 1 == e_month:
+        start_folder_days = os.listdir(start_folder)[s_day-1:] # list days, from start day
+        # print(start_folder , "\n" , s_day , "\n" , s_day-1 , "\n" , os.listdir(start_folder) , "\n" , start_folder_days)
+        end_folder_days = os.listdir(end_folder)[:e_day]
+        list_of_products = list_days(start_folder_days, start_folder) + list_days(end_folder_days, end_folder)
+    # with month in between
+    elif s_month +1 < e_month:
+        start_folder_days = os.listdir(start_folder)[s_day-1:]
+        end_folder_days = os.listdir(end_folder)[:e_day]
+        list_of_products = list_days(start_folder_days, start_folder) + list_days(end_folder_days, end_folder)
+
+        for i in range(s_month+1,e_month):
+            if i < 10:
+                month = "0" + str(i)
+            elif i >= 10:
+                month = str(i)
+
+            month_path = os.path.join(path, start[0:5], month)
+            month_days_list = os.listdir(month_path)
+            month_prod_list = list_days(month_days_list, month_path)
+            list_of_products.extend(month_prod_list)
+        
+    return list_of_products
+
+
+def search_for_reference(scene_gpd, ref_gpd, ref_sensor: str = "S1A", epsg: int = 32631):
+    """This function searches for the set of eligible reference scenes for coregistration.
+    
+    If no scene is found, something is off.
+    If one scene is found, it should be from the same sensor.
+    If two scenes are found, it should be a different sensor.
+    :param scene_gpd: gpd of scene to search a reference for
+    :param ref_gpd: gpd with reference bursts
+    :param ref_sensor: sensor of ref_gpd
+    :param epsg: EPSG CRS to convert to for area calculation
+    """
+    epsg_str = 'epsg:' + str(epsg)
+    
+    scene_gpd = scene_gpd.dissolve("subswath", as_index = False)
+    # scene_gpd.to_file("scene_gpd_check_" + str(scene_gpd.iloc[0]["id"]) + ".geojson", driver = "GeoJSON")
+    scene_sensor = scene_gpd.iloc[0]["sensor"]
+    rel_o = scene_gpd.iloc[0]["rel_orbit"]
+    o_dir = scene_gpd.iloc[0]["orbit_direction"]
+    # search in existing table for bursts of the same relative orbit and orbit direction
+    ref_gpd_same_orbit = ref_gpd.loc[(ref_gpd["rel_orbit"] == rel_o) & (ref_gpd["orbit_direction"] == o_dir)]
+    
+    # if scenes from the same orbit are found
+    if not ref_gpd_same_orbit.empty:
+        ref_gpd_same_orbit = ref_gpd_same_orbit.dissolve(["id", "subswath"], as_index = False)
+        
+        # calculate intersection
+        intersection = gpd.overlay(ref_gpd_same_orbit, scene_gpd, how = "intersection") # so id_1 is different each intersection
+
+        if not intersection.empty:
+
+            intersection["area"] = intersection.to_crs({'init': epsg_str}).area
+
+            # intersection.to_file("intersection" + str(intersection.iloc[0]["id_2"]) + ".geojson", driver="GeoJSON")
+
+            # filter intersection for geometries larger or equal to the size of a single burst
+            burst_size = 1800000000.0
+            intersection = intersection.loc[intersection["area"] > burst_size]
+            
+            if not intersection.empty:
+
+                if scene_sensor == ref_sensor:
+                    #intersection.to_file("intersection.geojson", driver=  "GeoJSON")
+                    #scene_gpd.to_file("scene_gpd.geojson", driver="GeoJSON")
+                    # intersection should now contain only one specific id_1
+                    # print(intersection[["id_2", "subswath_2", "burst_2", "area", "id_1", "subswath_1", "burst_1"]])
+                    subs = set(intersection["subswath_1"].array)
+                    return {intersection.iloc[0].loc["id_1"]: list(subs)}
+                else:
+                    # print(intersection[["id_2", "subswath_2", "burst_2", "area", "id_1", "subswath_1", "burst_1"]])            
+                    # make set of id_1 column
+                    ids = set(intersection["id_1"].array)
+                    # search for each id for involved subswaths
+                    subs_dict = {}
+                    for id in ids:
+                        subs = intersection.loc[intersection["id_1"] == id]["subswath_1"].array
+                        # in intersection, burst info is lost..
+                        subs_dict[id] = list(subs)
+                    # print(subs_dict)
+                    return subs_dict
+                    # 1.825593e+09 is in
+                    # 2.075e-09 is in, 1.569e-09 (full subswath side intersection) is out
+                    # 1.814e-09 is in, one burst, same sensor
+                    
+            else:
+                return {}
+            
+    # when no intersection, return empty array
+    else:
+        return {}
+
+
+def process_geojson(products, prod_file: str, ref_bursts_file: str, epsg_str: str = "epsg:32631"):
+
+    if os.path.isfile(prod_file):
+        prod_gpd = gpd.read_file(prod_file)
+        print(prod_file, " contains ", len(prod_gpd.index), " bursts.")
+        create_new_file = False
+    else:
+        print("prod_file not found")
+        create_new_file = True
+
+    ref_bursts = gpd.read_file(ref_bursts_file)
+
+    new_bursts = []
+
+    for path in products:
+        # make swath geometry and add basic info to df
+        scene_bursts = create_gpd_for_scene(path)
+
+        # search directly for ref scene
+        ref_scene_dict = search_for_reference(scene_bursts, ref_bursts)
+
+        # decide which bursts need to be processed!
+        # iterate through subswaths of reference scenes
+        if ref_scene_dict:
+            for id in [*ref_scene_dict]:
+                for subs in ref_scene_dict[id]:
+                    # filter current scene and reference bursts for the current subswath
+                    scene_bursts_subs = scene_bursts.loc[scene_bursts["subswath"] == subs]
+                    ref_bursts_filtered = ref_bursts.loc[(ref_bursts["id"] == id) & (ref_bursts["subswath"] == subs)]
+                    intersection = gpd.overlay(ref_bursts_filtered, scene_bursts_subs, how = "intersection")
+
+                    # filter for those roughly big enough to represent a burst
+                    intersection["area"] = intersection.to_crs({'init': epsg_str}).area
+                    intersection = intersection.loc[intersection["area"] > 1000000000.0]
+
+                    # define ranges
+                    range_ref = [min(intersection["burst_1"]), max(intersection["burst_1"])]
+                    range_sce = [min(intersection["burst_2"]), max(intersection["burst_2"])]
+                    # print(intersection.iloc[0].loc["id_2"], "_", id, range_ref, range_sce)
+
+                    # add corresponding scene_bursts to new_bursts
+                    bursts_to_add = scene_bursts_subs.loc[(scene_bursts_subs["burst"] >= range_sce[0]) & 
+                                                          (scene_bursts_subs["burst"] <= range_sce[1])]
+                    # add info on reference scene
+                    bursts_to_add.assign(ref_scene = id)
+                    # bursts_to_add["ref_scene"] = id
+                    bursts_to_add.assign(ref_scene_min_burst = range_ref[0])
+                    # bursts_to_add["ref_scene_min_burst"] = range_ref[0]
+                    bursts_to_add.assign(ref_scene_max_burst = range_ref[1])
+                    # bursts_to_add["ref_scene_max_burst"] = range_ref[1]
+                    bursts_to_add.assign(processing_status = 0)
+                    # bursts_to_add["processing_status"] = 0
+
+                    if create_new_file:
+                        new_bursts.append(bursts_to_add)
+                    else:
+                        for burst in list(bursts_to_add.loc[:, "burst"]):
+                            # test if burst in frame already
+                            in_table = prod_gpd.loc[(prod_gpd["id"] == bursts_to_add.iloc[0].loc["id"]) & 
+                                                    (prod_gpd["subswath"] == subs) & 
+                                                    # convert to str, otherwise comparison is false
+                                                    (prod_gpd["burst"] == str(burst))]                        
+                            if in_table.empty:
+                                try:
+                                    new_bursts.append(bursts_to_add.loc[bursts_to_add["burst"] == burst])
+                                except TypeError:
+                                    raise
+                            else:
+                                pass
+        else:
+            print("scene has no references")
+
+    if create_new_file:
+        save_new_bursts(new_bursts = new_bursts, create_new_file = create_new_file, 
+                        filename = prod_file)
+    else:
+        save_new_bursts(new_bursts = new_bursts, create_new_file = create_new_file, 
+                        filename = prod_file, old_gpd = prod_gpd)

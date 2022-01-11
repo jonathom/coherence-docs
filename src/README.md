@@ -14,11 +14,11 @@ The function `create_reference_scene_json()` in `reference_frames.py` takes a ti
 * bursts that lie in the middle of a subswath but do not intersect the AOI are left out. Out of practicality, only continuous subswaths should be processed (via min-max constraint probably)
 * Of course the `.geojson` does not contain any SAR data and can only serve as a guide to which scenes should be processed and with which respective reference scenes that should be done.
 
-**Step 1 is to execute `create_reference_scene_json()` with a proper timeframe and an AOI `geojson` file.**
+**Step 1 is to execute `create_reference_frames.py` with a proper timeframe (currently hardcoded) and an AOI `geojson` file. It will create or add to `reference_bursts.geojson` which will contain a collection of bursts that covers the AOI (consider Terrascope availability).**
 
-## Step 2: Orchestrate Preprocessing Workflow
+## Step 2: Organize Bursts to Process
 
-**2.1 List products in a given time range**
+### 2.1 List products in a given time range
 
 `list_products_by_time` in `preprocessing.py`
 
@@ -26,8 +26,15 @@ The function `create_reference_scene_json()` in `reference_frames.py` takes a ti
 * can not handle year changes
 * is only designed to be able to get *one day* of data, or like *five days* or *a month* if it works better for testing purposes.
 
-**2.2 make gpd / integrate into gpd of processed bursts**
+### 2.2 make gpd / integrate into gpd of processed bursts
 
 The `processing.geojson` file is produced here. It contains all bursts that are fed to it via the `list_products_by_time` function (only once). For each burst it contains the reference scene `id` and the range of bursts (`min`, `max`) of the reference scene for that subswath. It is not necessary to relate every scene burst to the exact reference burst because the processing is gonna be subswath - wise anyway.
 
-Next up: putting everything into useful functions, mabe outsource some functionality to util.py.
+* `process_geojson()` function to handle the `processing.geojson` file, via `create_processing_gjson.py`
+* e.g. call `python create_processing_gjson.py "2021/07/06" "2021/07/10"`
+* processing.geojson is created containing bursts and their reference scenes and those scenes relevant swaths
+
+**Step 2 is to execute `python create_processing_gjson.py "2021/07/06" "2021/07/10"` (with any dates you like within one year, maybe steer clear of Oct 2021). It will create or add to `processing.geojson` with a list of bursts that shall be processed.**
+
+## Step 3: Orchestrate Preprocessing via pyroSAR
+

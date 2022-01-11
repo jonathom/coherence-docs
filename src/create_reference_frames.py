@@ -5,9 +5,9 @@ import pandas as pd
 import geopandas as gpd
 import sys, os
 
-from util import suppress_stdout, create_gpd_for_scene
+from util import suppress_stdout, create_gpd_for_scene, save_new_bursts
 
-def create_reference_scene_json(start, end, aoi_file: str, ref_bursts_file: str = None):
+def create_reference_scene_json(start, end, aoi_file: str, ref_bursts_file: str = ""):
     """Create a GeoJSON that contains a set of Sentinel 1 reference scenes that are needed as common coregister-references.
     
     This function employs some tests to make sure every individual scene is only covered once. 
@@ -105,47 +105,28 @@ def create_reference_scene_json(start, end, aoi_file: str, ref_bursts_file: str 
                     new_bursts.append(intersecting_bursts)
 
     # when new bursts are found
-    if new_bursts:
-        new_bursts_df = gpd.GeoDataFrame(pd.concat(new_bursts, ignore_index = True), crs=new_bursts[0].crs)
-
-        # if a file exists, add to it and rewrite
-        if not create_new_file:
-            print(len(new_bursts_df), " bursts added.")
-            new_bursts_df = ref_bursts.append(new_bursts_df, sort = False)
-        else:
-            print(len(new_bursts_df), " bursts found.")
-
-        # a relative frame number is given, not yet sure how useful that is
-        # create empty dictionairy for the mapping ID - frame number
-        relative_frames = {}
-        # initiate column
-        new_bursts_df["rel_frame"] = 0
-        # init frame number
-        fnr = int(1)
-
-        # TODO heard that iterrows() is slow, not sure how I could improve here
-        for index, row in new_bursts_df.iterrows():
-            if row["id"] in relative_frames:
-                new_bursts_df.at[index, "rel_frame"] = relative_frames[row["id"]]
-            else:
-                new_bursts_df.at[index, "rel_frame"] = fnr
-                relative_frames[row["id"]] = fnr
-                fnr += 1
-
-        # write bursts
-        new_bursts_df.to_file("reference_bursts.geojson", driver = "GeoJSON")
-        # extract scenes and write
-        new_bursts_df.dissolve(["id"], as_index = False).to_file("reference_scenes.geojson", driver = "GeoJSON")
-
-    elif not new_bursts:
-        print("nothing added")
-    else:
-        print("[ERROR]: something went wrong: reference_frames.py")
-
-    print("[INFO]: Done looking for new scenes.")
+    save_new_bursts(new_bursts = new_bursts, create_new_file = create_new_file, old_gpd = ref_bursts,
+                    filename = "reference_bursts.geojson", save_as_scenes = True, 
+                    scenes_filename = "reference_scenes.geojson")
     return
 
 
+# a relative frame number is given, not yet sure how useful that is
+# create empty dictionairy for the mapping ID - frame number
+# relative_frames = {}
+# initiate column
+# new_bursts_df["rel_frame"] = 0
+# init frame number
+# fnr = int(1)
+
+# TODO heard that iterrows() is slow, not sure how I could improve here
+# for index, row in new_bursts_df.iterrows():
+#     if row["id"] in relative_frames:
+#         new_bursts_df.at[index, "rel_frame"] = relative_frames[row["id"]]
+#     else:
+#         new_bursts_df.at[index, "rel_frame"] = fnr
+#         relative_frames[row["id"]] = fnr
+#         fnr += 1
 
 # input time frame in which reference scenes should be defined
 # this should be no longer than 12 days! after 12 days, orbits of a single satellite repeat and ambiguities arise
