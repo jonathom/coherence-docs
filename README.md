@@ -687,7 +687,12 @@ Ascending                                         | Descending
 * execute with `sh run-cluster.sh`
 * find status and id at https://epod-master1.vgt.vito.be:8090/ui2/index.html#/yarn-apps/apps
 * show logs with `yarn logs -applicationId application_1641369770147_7570 -log_files_pattern stdout | less`
-
+* problems: write files, get input data
+* docs etc: https://docs.terrascope.be/#/Developers/Hadoop/Hadoop
+* How can I execute the appMaster normally, without docker?
+* showing of logs in webpage kind of doesnt work
+* adding `,/home/jonathanbahlmann/Public:/home/jonathanbahlmann/Public:rw` to the mounted directories in worker nodes increases processing time to 18mins.. why? : looked at `... pattern stderr` and realpath couldn't be found because it's acutally `/data/users/Public/jonathanbahlmann/`
+* next: try again to write a file, run withut first docker?
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
 * `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`
