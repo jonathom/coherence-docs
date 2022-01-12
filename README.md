@@ -678,6 +678,16 @@ Ascending                                         | Descending
 :------------------------------------------------:|:-------------------------------------:
 ![](./img/reference_bursts_asc.png)  |  ![](./img/reference_bursts_desc.png)
 
+
+# Spark & Docker
+* `filesRDD = sc.parallelize(files)` this is really just a list of file names (starting with "data") - questions is: should the ref scene or the sec scene be given? or both?
+* I think a whole array can be given and it will be parallelized per entry in the list
+* can I just write files when I mount the out dir in run-cluster-docker.sh?
+* jobs suddenly take super long, not sure why that is
+* execute with `sh run-cluster.sh`
+* find status and id at https://epod-master1.vgt.vito.be:8090/ui2/index.html#/yarn-apps/apps
+* show logs with `yarn logs -applicationId application_1641369770147_7570 -log_files_pattern stdout | less`
+
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
 * `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`
