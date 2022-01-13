@@ -694,6 +694,12 @@ Ascending                                         | Descending
 * adding `,/home/jonathanbahlmann/Public:/home/jonathanbahlmann/Public:rw` to the mounted directories in worker nodes increases processing time to 18mins.. why? : looked at `... pattern stderr` and realpath couldn't be found because it's acutally `/data/users/Public/jonathanbahlmann/`
 * next: try again to write a file, run withut first docker?
 
+```
+--conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=/var/lib/sss/pipes:/var/lib/sss/pipes:rw,/usr/hdp/current/:/usr/hdp/current/:ro,/etc/hadoop/conf/:/etc/hadoop/conf/:ro,/etc/krb5.conf:/etc/krb5.conf:ro \
+--conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_TYPE=docker \
+--conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=vito-docker-private.artifactory.vgt.vito.be/dockerspark-quickstart \
+```
+
 ## Python Review
 * pandas subset selections like `df.loc[(condisiton 1) & (condition2)]` can be written to variable (say `rows`) and then selected like `df.loc[rows]`
 * pandas can't be subset more than once for assignment (without giving a warning), so assign columns to original df and then subset after (e.g. `df.loc[rows, "new column"] = new_value` and then `new_fd = df.loc[rows]`)

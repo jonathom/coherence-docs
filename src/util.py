@@ -342,7 +342,9 @@ def process_geojson(products, prod_file: str, ref_bursts_file: str, epsg_str: st
         # decide which bursts need to be processed!
         # iterate through subswaths of reference scenes
         if ref_scene_dict:
+            # for each found reference scene
             for id in [*ref_scene_dict]:
+                # for each subswath
                 for subs in ref_scene_dict[id]:
                     # filter current scene and reference bursts for the current subswath
                     scene_bursts_subs = scene_bursts.loc[scene_bursts["subswath"] == subs]
@@ -362,8 +364,11 @@ def process_geojson(products, prod_file: str, ref_bursts_file: str, epsg_str: st
                     rows = (scene_bursts["subswath"] == subs) & (scene_bursts["burst"] >= range_sce[0]) & (scene_bursts["burst"] <= range_sce[1])
                     
                     scene_bursts.loc[rows, "ref_scene"] = id
-                    scene_bursts.loc[rows, "ref_scene_min_burst"] = range_ref[0]
-                    scene_bursts.loc[rows, "ref_scene_max_burst"] = range_ref[1]
+                    scene_bursts.loc[rows, "ref_min_burst"] = range_ref[0]
+                    scene_bursts.loc[rows, "ref_max_burst"] = range_ref[1]
+                    # write scene burst info as well
+                    scene_bursts.loc[rows, "sce_min_burst"] = range_sce[0]
+                    scene_bursts.loc[rows, "sce_max_burst"] = range_sce[1]
                     scene_bursts.loc[rows, "processing_status"] = 0
                     
                     bursts_to_add = scene_bursts.loc[rows]
