@@ -2,3 +2,4 @@
 .ipynb_checkpoints/
 .nfs*
 .Rhistory
+__pycache__
