@@ -359,18 +359,14 @@ def process_geojson(products, prod_file: str, ref_bursts_file: str, epsg_str: st
                     # print(intersection.iloc[0].loc["id_2"], "_", id, range_ref, range_sce)
 
                     # add corresponding scene_bursts to new_bursts
-                    bursts_to_add = scene_bursts_subs.loc[(scene_bursts_subs["burst"] >= range_sce[0]) & 
-                                                          (scene_bursts_subs["burst"] <= range_sce[1])]
-                    # add info on reference scene
-                    #bursts_to_add.assign(ref_scene = id)
-                    #bursts_to_add.assign(ref_scene_min_burst = range_ref[0])
-                    #bursts_to_add.assign(ref_scene_max_burst = range_ref[1])
-                    #bursts_to_add.assign(processing_status = 0)
-                    # 
-                    bursts_to_add["ref_scene"] = id
-                    bursts_to_add["ref_scene_min_burst"] = range_ref[0]
-                    bursts_to_add["ref_scene_max_burst"] = range_ref[1]
-                    bursts_to_add["processing_status"] = 0
+                    rows = (scene_bursts["subswath"] == subs) & (scene_bursts["burst"] >= range_sce[0]) & (scene_bursts["burst"] <= range_sce[1])
+                    
+                    scene_bursts.loc[rows, "ref_scene"] = id
+                    scene_bursts.loc[rows, "ref_scene_min_burst"] = range_ref[0]
+                    scene_bursts.loc[rows, "ref_scene_max_burst"] = range_ref[1]
+                    scene_bursts.loc[rows, "processing_status"] = 0
+                    
+                    bursts_to_add = scene_bursts.loc[rows]
 
                     if create_new_file:
                         new_bursts.append(bursts_to_add)
