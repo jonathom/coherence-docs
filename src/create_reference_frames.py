@@ -23,15 +23,15 @@ def create_reference_scene_json(start, end, aoi_file: str, ref_bursts_file: str 
     if not start - end == dt.timedelta(days = 12):
         print("[CAUTION]: For full coverage, a 12 day timedelta is recommended. Timedelta: ", start-end)
     elif (start - end) > dt.timedelta(days = 12):
-        print("[ERROR]: This case is not covered here.")
-        return
-    
-    if os.path.isfile(aoi_file):
-        aoi = gpd.read_file(aoi_file)
-    else:
-        print("[ERROR]: no aoi_file given")
-        return
-    
+        # This is a pattern to avoid: `print("error") + return None`, this will cause a lot of problems down the road.
+        # just throw an exception
+        raise ValueError("the 'timedetla > 12' case is not covered here")
+
+    # Same here: throw an exception instead. You can even use `assert`, which saves you an `if`.
+    # Moreover: gpd.read_file is probably going to complain anyway, so you don't have to do the checking in the first place
+    assert os.path.isfile(aoi_file)
+    aoi = gpd.read_file(aoi_file)
+
     if os.path.isfile(ref_bursts_file):
         ref_bursts = gpd.read_file(ref_bursts_file)
         create_new_file = False
@@ -136,6 +136,9 @@ def create_reference_scene_json(start, end, aoi_file: str, ref_bursts_file: str 
 # input time frame in which reference scenes should be defined
 # this should be no longer than 12 days! after 12 days, orbits of a single satellite repeat and ambiguities arise
 # My use case was to collect the base scenes from 1.10 - 12.10.2021, and to add some scenes over france from oct 2020 later on
+
+# Avoid putting these settings at the top level of the file, at least put them under `if __name__ == "__main__":`
+
 start = dt.date(2021, 10, 1)
 end = dt.date(2021, 10, 13)
 ref_bursts_file = "/home/jonathanbahlmann/Public/coherence-docs/src/reference_bursts.geojson"
