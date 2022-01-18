@@ -3,6 +3,8 @@ import stsa
 import pandas as pd
 import geopandas as gpd
 import sys, os
+from pathlib import Path
+import datetime
 import glob
 from contextlib import contextmanager
 
@@ -21,7 +23,7 @@ def suppress_stdout():
             sys.stdout = old_stdout
             
             
-def create_gpd_for_scene(path: str, name: str = None, id: str = None, make_regular: bool = False):
+def create_gpd_for_scene(path: str, name: str = None, id: str = None, make_regular: bool = False) -> gpd.GeoDataFrame:
     """Create a geopandas dataframe for a S1 scene.
     
     Metadata is read using pyroSAR. Creates the gpd using stsa.
@@ -33,7 +35,7 @@ def create_gpd_for_scene(path: str, name: str = None, id: str = None, make_regul
     :param make_regular: when true, additional bursts are deleted from the df
     """
     if name is None:
-        name = path[path.rfind("/")+1:len(path)-4]
+        name = Path(path).stem
         
     if id is None:
         id = name[len(name)-4:len(name)]        
@@ -91,20 +93,13 @@ def create_gpd_for_scene(path: str, name: str = None, id: str = None, make_regul
         # print(stsa_geom.loc[:,"burst"].to_list())
         stsa_geom["regular_burst_pattern"] = 0
 
-    return(stsa_geom)
+    return stsa_geom
 
 # a quick test
 # df = create_gpd_for_scene(path = "/data/MTDA/CGS_S1/CGS_S1_SLC_L1/IW/DV/2021/10/03/S1A_IW_SLC__1SDV_20211003T173237_20211003T173305_039958_04BAA1_14F6/S1A_IW_SLC__1SDV_20211003T173237_20211003T173305_039958_04BAA1_14F6.zip", make_regular = True)
-    
-def list_days(list_of_days, month_path):
-    all_file_list = []
-    for day in list_of_days:
-        file_list = glob.glob(os.path.join(month_path, day) + "/*/*.zip")
-        all_file_list.extend(file_list)
-    return all_file_list
 
 
-def search_for_reference(scene_gpd, ref_gpd, ref_sensor: str = "S1A", epsg: int = 32631):
+def search_for_reference(scene_gpd, ref_gpd, ref_sensor: str = "S1A", epsg: int = 32631) -> list:
     """This function searches for the set of eligible reference scenes for coregistration.
     
     If no scene is found, something is off.
@@ -195,59 +190,39 @@ def save_new_bursts(new_bursts, create_new_file: bool, filename,
     elif not new_bursts:
         print("nothing added")
     else:
-        print("[ERROR]: something went wrong: reference_frames.py")
+        raise RuntimeError("save_new_bursts: new_bursts unclear.")
 
     print("[INFO]: Done looking for new scenes.")
-    return
 
 
-def list_products_by_time(start, end, path: str = "/data/MTDA/CGS_S1/CGS_S1_SLC_L1/IW/DV/"):
-    """This function returns an array of paths of S1 SLC products.
+def list_products_by_time(start, end, path: str = "/data/MTDA/CGS_S1/CGS_S1_SLC_L1/IW/DV/") -> list:
+    """This function returns an array of paths of S1 SLC products. The search is right-closed,
+    i.e. to get one day yone must enter day, day+1
     
     The search is temporal and oriented at the TERRASCOPE folder structure.
     :param start: start time of search in YYYY/mm/dd
     :param end: end of search in YYYY/mm/dd
     :param path: path of directory with the scenes
     """
-    s_month = int(start[5:7])
-    e_month = int(end[5:7])
-    s_day = int(start[8:])
-    e_day = int(end[8:])
+    start_date = datetime.datetime.strptime(start, "%Y/%m/%d")
+    end_date = datetime.datetime.strptime(end, "%Y/%m/%d")
 
-    start_folder = path + start[0:7] # year and month, no /
-    end_folder = path + end[0:7]
+    # Using pathlib.Path as well for more robust path handling and walking
+    root = Path(path)
+    start_dir = str(root / start_date.strftime("%Y/%m/%d"))
+    end_dir = str(root / end_date.strftime("%Y/%m/%d"))
 
-    # if only in one month
-    if s_month == e_month:
-        start_folder_days = os.listdir(start_folder)[s_day-1:e_day] # list days, from start day : end day
-        list_of_products = list_days(list_of_days = start_folder_days, month_path = start_folder)
-    # no in between month
-    elif s_month + 1 == e_month:
-        start_folder_days = os.listdir(start_folder)[s_day-1:] # list days, from start day
-        # print(start_folder , "\n" , s_day , "\n" , s_day-1 , "\n" , os.listdir(start_folder) , "\n" , start_folder_days)
-        end_folder_days = os.listdir(end_folder)[:e_day]
-        list_of_products = list_days(start_folder_days, start_folder) + list_days(end_folder_days, end_folder)
-    # with month in between
-    elif s_month +1 < e_month:
-        start_folder_days = os.listdir(start_folder)[s_day-1:]
-        end_folder_days = os.listdir(end_folder)[:e_day]
-        list_of_products = list_days(start_folder_days, start_folder) + list_days(end_folder_days, end_folder)
-
-        for i in range(s_month+1,e_month):
-            if i < 10:
-                month = "0" + str(i)
-            elif i >= 10:
-                month = str(i)
-
-            month_path = os.path.join(path, start[0:5], month)
-            month_days_list = os.listdir(month_path)
-            month_prod_list = list_days(month_days_list, month_path)
-            list_of_products.extend(month_prod_list)
+    list_of_products = []
+    for year in range(start_date.year, end_date.year + 1):
+        year_path = Path(path) / str(year)
+        for day_dir in year_path.glob("[01][0123456789]/[0123][0123456789]"):
+            if start_dir <= str(day_dir) < end_dir:
+                list_of_products.extend(day_dir.glob("*/*.zip"))
         
     return list_of_products
 
 
-def search_for_reference(scene_gpd, ref_gpd, ref_sensor: str = "S1A", epsg: int = 32631):
+def search_for_reference(scene_gpd, ref_gpd, ref_sensor: str = "S1A", epsg: int = 32631) -> dict:
     """This function searches for the set of eligible reference scenes for coregistration.
     
     If no scene is found, something is off.
@@ -257,6 +232,7 @@ def search_for_reference(scene_gpd, ref_gpd, ref_sensor: str = "S1A", epsg: int 
     :param ref_gpd: gpd with reference bursts
     :param ref_sensor: sensor of ref_gpd
     :param epsg: EPSG CRS to convert to for area calculation
+    :return: A dict is returned that contains the found reference scenes IDs as keys, with an array of the applicable subswaths as values.
     """
     epsg_str = 'epsg:' + str(epsg)
     
@@ -313,7 +289,7 @@ def search_for_reference(scene_gpd, ref_gpd, ref_sensor: str = "S1A", epsg: int 
             else:
                 return {}
             
-    # when no intersection, return empty array
+    # when no intersection, return empty dict
     else:
         return {}
 
@@ -333,6 +309,9 @@ def process_geojson(products, prod_file: str, ref_bursts_file: str, epsg_str: st
     new_bursts = []
 
     for path in products:
+        # convert back to string
+        abs_path = path.absolute()
+        path = abs_path.as_posix()
         # make swath geometry and add basic info to df
         scene_bursts = create_gpd_for_scene(path)
 
@@ -383,10 +362,7 @@ def process_geojson(products, prod_file: str, ref_bursts_file: str, epsg_str: st
                                                     # convert to str, otherwise comparison is false
                                                     (prod_gpd["burst"] == str(burst))]                        
                             if in_table.empty:
-                                try:
-                                    new_bursts.append(bursts_to_add.loc[bursts_to_add["burst"] == burst])
-                                except TypeError:
-                                    raise
+                                new_bursts.append(bursts_to_add.loc[bursts_to_add["burst"] == burst])
                             else:
                                 pass
         else:

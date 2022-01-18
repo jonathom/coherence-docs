@@ -693,6 +693,7 @@ Ascending                                         | Descending
 * showing of logs in webpage kind of doesnt work
 * adding `,/home/jonathanbahlmann/Public:/home/jonathanbahlmann/Public:rw` to the mounted directories in worker nodes increases processing time to 18mins.. why? : looked at `... pattern stderr` and realpath couldn't be found because it's acutally `/data/users/Public/jonathanbahlmann/`
 * next: try again to write a file, run withut first docker?
+* tried new docker image /mundialis/esa-snap:ubuntu, but it has no bash installed
 
 ```
 --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=/var/lib/sss/pipes:/var/lib/sss/pipes:rw,/usr/hdp/current/:/usr/hdp/current/:ro,/etc/hadoop/conf/:/etc/hadoop/conf/:ro,/etc/krb5.conf:/etc/krb5.conf:ro \
@@ -703,6 +704,15 @@ Ascending                                         | Descending
 ## Python Review
 * pandas subset selections like `df.loc[(condisiton 1) & (condition2)]` can be written to variable (say `rows`) and then selected like `df.loc[rows]`
 * pandas can't be subset more than once for assignment (without giving a warning), so assign columns to original df and then subset after (e.g. `df.loc[rows, "new column"] = new_value` and then `new_fd = df.loc[rows]`)
+* do not just print errors, but raise them `raise ValueError`, `RuntimeError`
+* dont import as `*`, makes it hard to see where functions are from
+* `assert os.path.isfile(aoi_file)` instead of `if..`
+* put main methods and given parameters into `if __name == "__main__":`
+* with `from pathlib import Path` at top of file find the "stem" of a path with `name = Path(path).stem`
+* do return type hints `def func() -> returnType:`
+* no empty return at the end needed
+* use a dummy function `def main(arg1, arg2, arg3 = 4, arg4 = "default")` to avoid annoying argument handling, then just pass `main(*sys.argv[1:])` to `if __name__`. 
+* work with `pathlib.Path`: `path / "2022" / "01"` instead of `os.path.join(path, "2022", "01")`, `path.stem` instead of `os.path.splitext(os.path.basename(path))`, `path.glob("*.zip")` instead of `glob.glob(os.path.join(path, "*.zip"))`, convert back to string for libraries that only support strings or storing, e.g. JSON.
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`

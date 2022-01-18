@@ -20,17 +20,13 @@ def create_reference_scene_json(start, end, aoi_file: str, ref_bursts_file: str 
     """
     
     # input checks
-    if not start - end == dt.timedelta(days = 12):
+    if not start - end == dt.timedelta(days = -12):
         print("[CAUTION]: For full coverage, a 12 day timedelta is recommended. Timedelta: ", start-end)
-    elif (start - end) > dt.timedelta(days = 12):
-        print("[ERROR]: This case is not covered here.")
-        return
+    if (start - end) > dt.timedelta(days = 12):
+        raise ValueError("do not input a time range greater than 12 days")
     
-    if os.path.isfile(aoi_file):
-        aoi = gpd.read_file(aoi_file)
-    else:
-        print("[ERROR]: no aoi_file given")
-        return
+    assert os.path.isfile(aoi_file)
+    aoi = gpd.read_file(aoi_file)
     
     if os.path.isfile(ref_bursts_file):
         ref_bursts = gpd.read_file(ref_bursts_file)
@@ -136,10 +132,11 @@ def create_reference_scene_json(start, end, aoi_file: str, ref_bursts_file: str 
 # input time frame in which reference scenes should be defined
 # this should be no longer than 12 days! after 12 days, orbits of a single satellite repeat and ambiguities arise
 # My use case was to collect the base scenes from 1.10 - 12.10.2021, and to add some scenes over france from oct 2020 later on
-start = dt.date(2021, 10, 1)
-end = dt.date(2021, 10, 13)
-ref_bursts_file = "/home/jonathanbahlmann/Public/coherence-docs/src/reference_bursts.geojson"
-aoi_file = "/home/jonathanbahlmann/Public/coherence-docs/aoi/belgium_france.geojson"
-
-# usage
-create_reference_scene_json(start = start, end = end, aoi_file = aoi_file, ref_bursts_file = ref_bursts_file)
+if __name__ == "__main__":
+    start = dt.date(2021, 10, 1)
+    end = dt.date(2021, 10, 13)
+    ref_bursts_file = "/home/jonathanbahlmann/Public/coherence-docs/src/reference_bursts.geojson"
+    aoi_file = "/home/jonathanbahlmann/Public/coherence-docs/aoi/belgium_france.geojson"
+    
+    # usage
+    create_reference_scene_json(start = start, end = end, aoi_file = aoi_file, ref_bursts_file = ref_bursts_file)
