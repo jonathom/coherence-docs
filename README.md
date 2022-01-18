@@ -679,6 +679,19 @@ Ascending                                         | Descending
 ![](./img/reference_bursts_asc.png)  |  ![](./img/reference_bursts_desc.png)
 
 
+## Python Review
+* pandas subset selections like `df.loc[(condisiton 1) & (condition2)]` can be written to variable (say `rows`) and then selected like `df.loc[rows]`
+* pandas can't be subset more than once for assignment (without giving a warning), so assign columns to original df and then subset after (e.g. `df.loc[rows, "new column"] = new_value` and then `new_fd = df.loc[rows]`)
+* do not just print errors, but raise them `raise ValueError`, `RuntimeError`
+* dont import as `*`, makes it hard to see where functions are from
+* `assert os.path.isfile(aoi_file)` instead of `if..`
+* put main methods and given parameters into `if __name == "__main__":`
+* with `from pathlib import Path` at top of file find the "stem" of a path with `name = Path(path).stem`
+* do return type hints `def func() -> returnType:`
+* no empty return at the end needed
+* use a dummy function `def main(arg1, arg2, arg3 = 4, arg4 = "default")` to avoid annoying argument handling, then just pass `main(*sys.argv[1:])` to `if __name__`. 
+* work with `pathlib.Path`: `path / "2022" / "01"` instead of `os.path.join(path, "2022", "01")`, `path.stem` instead of `os.path.splitext(os.path.basename(path))`, `path.glob("*.zip")` instead of `glob.glob(os.path.join(path, "*.zip"))`, convert back to string for libraries that only support strings or storing, e.g. JSON.
+
 # Spark & Docker
 * `filesRDD = sc.parallelize(files)` this is really just a list of file names (starting with "data") - questions is: should the ref scene or the sec scene be given? or both?
 * I think a whole array can be given and it will be parallelized per entry in the list
@@ -695,24 +708,20 @@ Ascending                                         | Descending
 * next: try again to write a file, run withut first docker?
 * tried new docker image /mundialis/esa-snap:ubuntu, but it has no bash installed
 
+* installing pyroSAR on a clean mundialis/esa-snap:ubuntu installs these: `GeoAlchemy2-0.10.2 SQLAlchemy-1.4.29 SQLAlchemy-Utils-0.38.2 certifi-2021.10.8 charset-normalizer-2.0.10 cycler-0.11.0 dill-0.3.4 greenlet-1.1.2 idna-3.3 importlib-metadata-4.8.3 kiwisolver-1.3.1 matplotlib-3.3.4 multiprocess-0.70.12.2 numpy-1.19.5 packaging-21.3 pathos-0.2.8 pillow-8.4.0 pox-0.3.0 ppft-1.6.6.4 progressbar2-3.55.0 psycopg2-2.7.7 pyparsing-3.0.6 pyroSAR-0.15.1 python-dateutil-2.8.2 python-utils-3.1.0 pyyaml-6.0 requests-2.27.1 six-1.16.0 spatialist-0.8.1 tblib-1.7.0 typing-extensions-4.0.1 urllib3-1.26.8 zipp-3.6.0`
+
 ```
 --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=/var/lib/sss/pipes:/var/lib/sss/pipes:rw,/usr/hdp/current/:/usr/hdp/current/:ro,/etc/hadoop/conf/:/etc/hadoop/conf/:ro,/etc/krb5.conf:/etc/krb5.conf:ro \
 --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_TYPE=docker \
 --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=vito-docker-private.artifactory.vgt.vito.be/dockerspark-quickstart \
 ```
 
-## Python Review
-* pandas subset selections like `df.loc[(condisiton 1) & (condition2)]` can be written to variable (say `rows`) and then selected like `df.loc[rows]`
-* pandas can't be subset more than once for assignment (without giving a warning), so assign columns to original df and then subset after (e.g. `df.loc[rows, "new column"] = new_value` and then `new_fd = df.loc[rows]`)
-* do not just print errors, but raise them `raise ValueError`, `RuntimeError`
-* dont import as `*`, makes it hard to see where functions are from
-* `assert os.path.isfile(aoi_file)` instead of `if..`
-* put main methods and given parameters into `if __name == "__main__":`
-* with `from pathlib import Path` at top of file find the "stem" of a path with `name = Path(path).stem`
-* do return type hints `def func() -> returnType:`
-* no empty return at the end needed
-* use a dummy function `def main(arg1, arg2, arg3 = 4, arg4 = "default")` to avoid annoying argument handling, then just pass `main(*sys.argv[1:])` to `if __name__`. 
-* work with `pathlib.Path`: `path / "2022" / "01"` instead of `os.path.join(path, "2022", "01")`, `path.stem` instead of `os.path.splitext(os.path.basename(path))`, `path.glob("*.zip")` instead of `glob.glob(os.path.join(path, "*.zip"))`, convert back to string for libraries that only support strings or storing, e.g. JSON.
+* `docker build .` to build from dockerfile (e.g. containing `FROM mundialis/esa-snap:ubuntu \ RUN apt-get update && apt-get install bash -y`) in the respective folder. should return image ID
+* run image with `docker run -it 659883fcbfea` e.g. with `bash` apended if we wanna see if it has bash. stop with control+c control+d
+* list images with `docker image ls`, remove image with `docker image rm [-f] <ID>`
+* `sqlite3` already installed in mundialis image, GDAL seems not to be
+* **next**: how to use a passed wheel inside spark appMaster and nodes?
+
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
