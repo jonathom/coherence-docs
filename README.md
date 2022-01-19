@@ -789,7 +789,9 @@ Exception in thread "main" org.apache.spark.SparkException: Application applicat
 ```
 
 * testing docker image is `vito-docker-private.artifactory.vgt.vito.be/dockerspark-quickstart`
-* 
+* current version `vito-docker.artifactory.vgt.vito.be/esa-snap-gdal:0.0.1`
+* 0.0.4 runs but has an issue with `hists.sum()`
+* trying to rebuild mundialis image, seemed stuck but this might be the outcome `1381853dac38`
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`

@@ -45,6 +45,7 @@ if __name__ == '__main__':
         # total = list(hists.reduce(lambda h, i: map(add, h, i)))
         total = hists.sum()
 
-        print( "sum of histograms: %s" % (total) )
+        # print( "sum of histograms: %s" % (total) )
+        print(hists)
     finally:
         sc.stop()
