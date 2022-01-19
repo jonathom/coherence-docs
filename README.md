@@ -788,6 +788,8 @@ Exception in thread "main" org.apache.spark.SparkException: Application applicat
 22/01/19 09:09:30 INFO ShutdownHookManager: Deleting directory /tmp/spark-097ef856-0e34-4667-8fe8-5bf8b066675d
 ```
 
+* testing docker image is `vito-docker-private.artifactory.vgt.vito.be/dockerspark-quickstart`
+* 
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`

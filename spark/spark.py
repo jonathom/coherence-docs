@@ -7,9 +7,10 @@ from datetime import datetime
 from operator import add
 # from histogram.files import ndvi_files
 from histogram.histogram import histogram
+# from geopandas.geopandas.geodataframe import GeoDataFrame
 # from geopandas-0.10.2-py2.py3-none-any.geopandas import geodataframe
 from pyspark import SparkContext
-# import geopandas as gpd
+#import geopandas.geopandas as gpd
 
 """
 The code in the __main__ block will be executed on a single node, the 'driver'. It describes the different steps that need
