@@ -21,7 +21,7 @@
         					<subswath>IW3</subswath>					
         					<selectedPolarisations>VV</selectedPolarisations>					
         					<firstBurstIndex>2</firstBurstIndex>					
-        					<lastBurstIndex>2</lastBurstIndex>					
+        					<lastBurstIndex>4</lastBurstIndex>					
         					<wktAoi/>					
       			</parameters>			
     	</node>	<node id="Apply-Orbit-File">			
@@ -55,7 +55,7 @@
         					<subswath>IW3</subswath>					
         					<selectedPolarisations>VV</selectedPolarisations>					
         					<firstBurstIndex>2</firstBurstIndex>					
-        					<lastBurstIndex>2</lastBurstIndex>					
+        					<lastBurstIndex>4</lastBurstIndex>					
         					<wktAoi/>					
       			</parameters>			
     	</node>	<node id="Apply-Orbit-File (2)">			
@@ -66,7 +66,7 @@
       			<parameters>					
         					<orbitType>Sentinel Restituted (Auto Download)</orbitType>					
         					<polyDegree>3</polyDegree>					
-        					<continueOnFail>false</continueOnFail>					
+        					<continueOnFail>true</continueOnFail>					
       			</parameters>			
     	</node>	<node id="Back-Geocoding">			
       			<operator>Back-Geocoding</operator>			
@@ -155,7 +155,7 @@
         					<sourceProduct refid="Terrain-Correction"/>					
       			</sources>			
       			<parameters>					
-        					<file>/data/users/Public/jonathanbahlmann/SNAP_results/testRun_01</file>					
+        					<file>/data/users/Public/jonathanbahlmann/SNAP_results/testRun_04</file>					
         					<formatName>GeoTIFF</formatName>					
         					<deleteOutputOnFailure>true</deleteOutputOnFailure>					
         					<writeEntireTileRows>false</writeEntireTileRows>					

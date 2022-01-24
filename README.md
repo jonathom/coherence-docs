@@ -793,6 +793,16 @@ Exception in thread "main" org.apache.spark.SparkException: Application applicat
 * 0.0.4 runs but has an issue with `hists.sum()`
 * trying to rebuild mundialis image, seemed stuck but this might be the outcome `1381853dac38`
 
+* `docker run -it -P --name testjava8 -v /home/jonathanbahlmann/Public:/VM_out -v /data/MTDA:/VM_in 2636ba28410e`
+* `./usr/local/snap/bin/gpt /data/users/Public/jonathanbahlmann/coherence-docs/SNAP_workflow.xml`
+* SNAP_workflow from repo produced NULL output, but might be due to only one burst selected, check on that
+* try building from mundialis dockerfile again, think that didnt work, the big image was esa-snap-gdal
+* try installing java 8 then
+
+* image with java 8 runs on spark
+* image can also run SNAP, but produces an image of zeros as result
+* checking the graph / computing new graph for testing purposes
+
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
 * `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`
