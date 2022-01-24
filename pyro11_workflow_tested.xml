@@ -4,7 +4,7 @@
     <operator>Read</operator>
     <sources/>
     <parameters class="com.bc.ceres.binding.dom.XppDomElement">
-      <file>/home/petra/Praktikum_VITO/S1A_IW_SLC__1SDV_20211014T165252_20211014T165319_040118_04C01F_7558.zip</file>
+      <file>/data/MTDA/CGS_S1/CGS_S1_SLC_L1/IW/DV/2022/01/07/S1A_IW_SLC__1SDV_20220107T173300_20220107T173327_041358_04EAC4_0171/S1A_IW_SLC__1SDV_20220107T173300_20220107T173327_041358_04EAC4_0171.zip</file>
       <formatName>SENTINEL-1</formatName>
       <copyMetadata>true</copyMetadata>
     </parameters>
@@ -37,7 +37,7 @@
     <operator>Read</operator>
     <sources/>
     <parameters class="com.bc.ceres.binding.dom.XppDomElement">
-      <file>/home/petra/Praktikum_VITO/S1B_IW_SLC__1SDV_20211020T165211_20211020T165239_029222_037CCF_4397.zip</file>
+      <file>/data/MTDA/CGS_S1/CGS_S1_SLC_L1/IW/DV/2022/01/19/S1A_IW_SLC__1SDV_20220119T173259_20220119T173326_041533_04F07C_561D/S1A_IW_SLC__1SDV_20220119T173259_20220119T173326_041533_04F07C_561D.zip</file>
       <formatName>SENTINEL-1</formatName>
       <copyMetadata>true</copyMetadata>
     </parameters>
@@ -147,7 +147,6 @@
       <saveLocalIncidenceAngle>false</saveLocalIncidenceAngle>
       <saveProjectedLocalIncidenceAngle>false</saveProjectedLocalIncidenceAngle>
       <saveSelectedSourceBand>true</saveSelectedSourceBand>
-      <saveLayoverShadowMask>false</saveLayoverShadowMask>
       <outputComplex>false</outputComplex>
       <applyRadiometricNormalization>false</applyRadiometricNormalization>
       <saveSigmaNought>false</saveSigmaNought>
@@ -166,7 +165,7 @@
     </sources>
     <parameters class="com.bc.ceres.binding.dom.XppDomElement">
       <writeEntireTileRows>false</writeEntireTileRows>
-      <file>/home/petra/Praktikum_VITO/pyroSAR/pyro11_256mbRAM.tif</file>
+      <file>/data/users/Public/jonathanbahlmann/SNAP_results/test_pyro11_02.tif</file>
       <deleteOutputOnFailure>true</deleteOutputOnFailure>
       <formatName>GeoTIFF</formatName>
       <clearCacheAfterRowWrite>false</clearCacheAfterRowWrite>

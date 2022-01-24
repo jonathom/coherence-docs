@@ -802,6 +802,8 @@ Exception in thread "main" org.apache.spark.SparkException: Application applicat
 * image with java 8 runs on spark
 * image can also run SNAP, but produces an image of zeros as result
 * checking the graph / computing new graph for testing purposes
+* new graph, first stage worked, on original mundialis image: `docker run -it -P --name test-on-mundialis -v /data:/data mundialis/esa-snap:ubuntu`
+* 
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
