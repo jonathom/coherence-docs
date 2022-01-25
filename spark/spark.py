@@ -10,7 +10,7 @@ from histogram.histogram import histogram
 # from geopandas.geopandas.geodataframe import GeoDataFrame
 # from geopandas-0.10.2-py2.py3-none-any.geopandas import geodataframe
 from pyspark import SparkContext
-#import geopandas.geopandas as gpd
+import geopandas as gpd
 
 """
 The code in the __main__ block will be executed on a single node, the 'driver'. It describes the different steps that need
