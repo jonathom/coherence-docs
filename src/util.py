@@ -338,6 +338,7 @@ def process_geojson(products, prod_file: str, ref_bursts_file: str, epsg_str: st
                     range_ref = [min(intersection["burst_1"]), max(intersection["burst_1"])]
                     range_sce = [min(intersection["burst_2"]), max(intersection["burst_2"])]
                     # print(intersection.iloc[0].loc["id_2"], "_", id, range_ref, range_sce)
+                    ref_path = ref_bursts_filtered.dissolve(["id", "path"], as_index=False).iloc[0]["path"]
 
                     # add corresponding scene_bursts to new_bursts
                     rows = (scene_bursts["subswath"] == subs) & (scene_bursts["burst"] >= range_sce[0]) & (scene_bursts["burst"] <= range_sce[1])
@@ -349,6 +350,8 @@ def process_geojson(products, prod_file: str, ref_bursts_file: str, epsg_str: st
                     scene_bursts.loc[rows, "sce_min_burst"] = range_sce[0]
                     scene_bursts.loc[rows, "sce_max_burst"] = range_sce[1]
                     scene_bursts.loc[rows, "processing_status"] = 0
+                    # also add path
+                    scene_bursts.loc[rows, "ref_path"] = ref_path
                     
                     bursts_to_add = scene_bursts.loc[rows]
 

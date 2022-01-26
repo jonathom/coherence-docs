@@ -723,70 +723,6 @@ Ascending                                         | Descending
 * **next**: how to use a passed wheel inside spark appMaster and nodes?
 
 * using new docker image
-```
-22/01/19 09:09:29 INFO Client: Application report for application_1641369770147_16250 (state: ACCEPTED)
-22/01/19 09:09:30 INFO Client: Application report for application_1641369770147_16250 (state: FAILED)
-22/01/19 09:09:30 INFO Client: 
-	 client token: N/A
-	 diagnostics: Application application_1641369770147_16250 failed 1 times (global limit =2; local limit is =1) due to AM Container for appattempt_1641369770147_16250_000001 exited with  exitCode: 126
-Failing this attempt.Diagnostics: [2022-01-19 09:09:29.506]Exception from container-launch.
-Container id: container_e5011_1641369770147_16250_01_000001
-Exit code: 126
-Exception message: Launch container failed
-Shell error output: Unable to find image 'vito-docker.artifactory.vgt.vito.be/esa-snap-gdal:latest' locally
-latest: Pulling from esa-snap-gdal
-01bf7da0a88c: Pulling fs layer
-[...]
-7953785907e9: Pull complete
-b465748f38bc: Pull complete
-9ab4fc1f061e: Pull complete
-Digest: sha256:6bfbaf7c4ce91634d44c0541c428bef447827272cc3b2fff5749d5161611b94d
-Status: Downloaded newer image for vito-docker.artifactory.vgt.vito.be/esa-snap-gdal:latest
-
-Shell output: main : command provided 4
-main : run as user is jonathanbahlmann
-main : requested yarn user is jonathanbahlmann
-f2d389f621744a6e6db7ed6eb2844230d2ba765a2263e0beafe23d4b869e9f63
-Creating script paths...
-Creating local dirs...
-Getting exit code file...
-Changing effective user to root...
-Inspecting docker container...
-Docker inspect command: /usr/bin/docker inspect --format {{.State.Pid}} container_e5011_1641369770147_16250_01_000001
-pid from docker inspect: 723
-Writing pid file...
-Writing to tmp file /data1/hadoop/yarn/local/nmPrivate/application_1641369770147_16250/container_e5011_1641369770147_16250_01_000001/container_e5011_1641369770147_16250_01_000001.pid.tmp
-Waiting for docker container to finish.
-Obtaining the exit code...
-Docker inspect command: /usr/bin/docker inspect --format {{.State.ExitCode}} container_e5011_1641369770147_16250_01_000001
-Exit code from docker inspect: 126
-Wrote the exit code 126 to /data1/hadoop/yarn/local/nmPrivate/application_1641369770147_16250/container_e5011_1641369770147_16250_01_000001/container_e5011_1641369770147_16250_01_000001.pid.exitcode
-
-
-[2022-01-19 09:09:29.528]Container exited with a non-zero exit code 126. 
-[2022-01-19 09:09:29.531]Container exited with a non-zero exit code 126. 
-For more detailed output, check the application tracking page: https://epod-master1.vgt.vito.be:8090/cluster/app/application_1641369770147_16250 Then click on links to logs of each attempt.
-. Failing the application.
-	 ApplicationMaster host: N/A
-	 ApplicationMaster RPC port: -1
-	 queue: default
-	 start time: 1642579690903
-	 final status: FAILED
-	 tracking URL: https://epod-master1.vgt.vito.be:8090/cluster/app/application_1641369770147_16250
-	 user: jonathanbahlmann
-22/01/19 09:09:30 INFO Client: Deleted staging directory hdfs://hacluster/user/jonathanbahlmann/.sparkStaging/application_1641369770147_16250
-Exception in thread "main" org.apache.spark.SparkException: Application application_1641369770147_16250 finished with failed status
-	at org.apache.spark.deploy.yarn.Client.run(Client.scala:1269)
-	at org.apache.spark.deploy.yarn.YarnClusterApplication.start(Client.scala:1627)
-	at org.apache.spark.deploy.SparkSubmit$.org$apache$spark$deploy$SparkSubmit$$runMain(SparkSubmit.scala:904)
-	at org.apache.spark.deploy.SparkSubmit$.doRunMain$1(SparkSubmit.scala:198)
-	at org.apache.spark.deploy.SparkSubmit$.submit(SparkSubmit.scala:228)
-	at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:137)
-	at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
-22/01/19 09:09:30 INFO ShutdownHookManager: Shutdown hook called
-22/01/19 09:09:30 INFO ShutdownHookManager: Deleting directory /tmp/spark-a141467e-270e-404f-8473-4ffbdc42a00f
-22/01/19 09:09:30 INFO ShutdownHookManager: Deleting directory /tmp/spark-097ef856-0e34-4667-8fe8-5bf8b066675d
-```
 
 * testing docker image is `vito-docker-private.artifactory.vgt.vito.be/dockerspark-quickstart`
 * current version `vito-docker.artifactory.vgt.vito.be/esa-snap-gdal:0.0.1`
@@ -803,7 +739,13 @@ Exception in thread "main" org.apache.spark.SparkException: Application applicat
 * image can also run SNAP, but produces an image of zeros as result
 * checking the graph / computing new graph for testing purposes
 * new graph, first stage worked, on original mundialis image: `docker run -it -P --name test-on-mundialis -v /data:/data mundialis/esa-snap:ubuntu`
-* 
+* `Fiona-1.8.20-cp36-cp36m-manylinux_2_5_x86_64.manylinux1_x86_64.whl,Shapely-1.8.0-cp36-cp36m-manylinux_2_5_x86_64.manylinux1_x86_64.whl,pyproj-3.3.0-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_x86_64.whl,pandas-1.0.0-cp36-cp36m-manylinux1_x86_64.whl,pytz-2021.3-py2.py3-none-any.whl,python_dateutil-2.8.2-py2.py3-none-any.whl,geopandas-0.10.2-py2.py3-none-any.whl`
+
+* adding dependencies (also for pyroSAR) eventually didn't work due to some problems with C compilation (I think)
+* install packages to image, see from there
+
+* iterate over list of pandas frames (first using `dissolve` and then `groupBy`), but path for reference scene is missing
+* go back in ref_Scene search to add it to dataframes
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
