@@ -747,6 +747,8 @@ Ascending                                         | Descending
 * iterate over list of pandas frames (first using `dissolve` and then `groupBy`), but path for reference scene is missing
 * go back in ref_Scene search to add it to dataframes
 
+* use existing pyroSAR workflow to create on the fly workflow for spark worker nodes
+
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
 * `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`

@@ -344,11 +344,11 @@ def process_geojson(products, prod_file: str, ref_bursts_file: str, epsg_str: st
                     rows = (scene_bursts["subswath"] == subs) & (scene_bursts["burst"] >= range_sce[0]) & (scene_bursts["burst"] <= range_sce[1])
                     
                     scene_bursts.loc[rows, "ref_scene"] = id
-                    scene_bursts.loc[rows, "ref_min_burst"] = range_ref[0]
-                    scene_bursts.loc[rows, "ref_max_burst"] = range_ref[1]
+                    scene_bursts.loc[rows, "ref_min_burst"] = int(range_ref[0])
+                    scene_bursts.loc[rows, "ref_max_burst"] = int(range_ref[1])
                     # write scene burst info as well
-                    scene_bursts.loc[rows, "sce_min_burst"] = range_sce[0]
-                    scene_bursts.loc[rows, "sce_max_burst"] = range_sce[1]
+                    scene_bursts.loc[rows, "sce_min_burst"] = int(range_sce[0])
+                    scene_bursts.loc[rows, "sce_max_burst"] = int(range_sce[1])
                     scene_bursts.loc[rows, "processing_status"] = 0
                     # also add path
                     scene_bursts.loc[rows, "ref_path"] = ref_path
