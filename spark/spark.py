@@ -7,12 +7,8 @@ from datetime import datetime
 from operator import add
 # from histogram.files import ndvi_files
 from histogram.histogram import histogram
-# from geopandas.geopandas.geodataframe import GeoDataFrame
-# from geopandas-0.10.2-py2.py3-none-any.geopandas import geodataframe
 from pyspark import SparkContext
-# import geopandas as gpd
-# import geopandas as gpd
-from pyroSAR.snap.auxil import parse_recipe, parse_node
+import geopandas as gpd
 
 """
 The code in the __main__ block will be executed on a single node, the 'driver'. It describes the different steps that need
@@ -25,16 +21,10 @@ if __name__ == '__main__':
     
     #The SparkContext is our entry point to bootstrap parallel operations.
     sc = SparkContext(appName='python-spark-docker')
-    sc.addPyFile("dependencies.zip") # https://intellipaat.com/community/15049/i-cant-seem-to-get-py-files-on-spark-to-work
-    import geopandas as gpd
     
     # files = ndvi_files('PROBAV_L3_S1_TOC_333M', start_date=datetime(2016, 1, 1), end_date=datetime(2016, 2, 1), min_lon=2.5, max_lon=6.5, min_lat=49.5, max_lat=51.5)
     
     files = [1, 2, 3, 4, 5]
-    
-
-
-
 
     try:
         #Distribute the local file list over the cluster. In Spark terminology, the result is called an RDD (Resilient Distributed Dataset).
