@@ -749,6 +749,13 @@ Ascending                                         | Descending
 
 * use existing pyroSAR workflow to create on the fly workflow for spark worker nodes
 
+**7.2.22**
+* iterating over datastructure works
+* `SNAP could not be identified. If you have installed it please add the path to the SNAP executables (bin subdirectory) to the PATH environment. E.g. in the Linux .bashrc file add the following line:
+export PATH=$PATH:path/to/snap/bin"
+`
+* job `application_1643116788003_11139` is supposed to return the processing_dicts
+
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
 * `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`

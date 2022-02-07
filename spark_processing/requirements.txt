@@ -1,0 +1,16 @@
+Fiona
+pandas==1.0.0
+pyproj
+python_dateutil
+pytz
+Shapely
+
+progressbar2
+numpy
+spatialist>=0.9
+pyyaml
+requests
+psycopg2==2.7.7
+SQLAlchemy>=1.4
+SQLAlchemy-Utils>=0.37
+GeoAlchemy2
