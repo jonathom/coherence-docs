@@ -8,6 +8,7 @@ def do_pyroSAR(df):
     from pyroSAR.snap.auxil import parse_recipe, parse_node
     from pyroSAR.snap.auxil import gpt
     from pyroSAR.snap.auxil import groupbyWorkers
+    import geopandas as gpd
 
     output_dir = "/data/users/Public/jonathanbahlmann/spark_results/"
 
@@ -24,22 +25,22 @@ def do_pyroSAR(df):
     
     for i, row in df.iterrows():
         swath = row["subswath"]
-        processing_dict[swath]["min_sce"] = row["sce_min_burst"]
-        processing_dict[swath]["max_sce"] = row["sce_max_burst"]
-        processing_dict[swath]["min_ref"] = row["ref_min_burst"]
-        processing_dict[swath]["max_ref"] = row["ref_max_burst"]
+        processing_dict[swath]["min_sce"] = int(row["sce_min_burst"])
+        processing_dict[swath]["max_sce"] = int(row["sce_max_burst"])
+        processing_dict[swath]["min_ref"] = int(row["ref_min_burst"])
+        processing_dict[swath]["max_ref"] = int(row["ref_max_burst"])
     
     workflow = parse_recipe('blank')
 
     # reference
     read = parse_node("Read")
-    read.parameters["file"] = df["ref_path"]
+    read.parameters["file"] = df.iloc[0]["ref_path"]
     read.parameters["formatName"] = "SENTINEL-1"
     workflow.insert_node(read)
 
     # secondary
     read2 = parse_node("Read")
-    read2.parameters["file"] = df["path"]
+    read2.parameters["file"] = df.iloc[0]["path"]
     read2.parameters["formatName"] = "SENTINEL-1"
     workflow.insert_node(read2)
 
@@ -186,13 +187,18 @@ def do_pyroSAR(df):
     workflow.insert_node(merge, before = merge_list)
                         
     write = parse_node("Write")
-    write.parameters["file"] = out_filename
+    write.parameters["file"] = output_dir + out_filename
     write.parameters["formatName"] = "BEAM-DIMAP"
     workflow.insert_node(write, before = merge.id)
                         
     workflow.write(output_dir + workflow_filename)
-                        
-    # groups = groupbyWorkers(output_dir + workflow_filename, n=1)
-    # print(groups)
     
-    return processing_dict
+    from os import listdir
+    print(listdir("./"))
+                        
+    groups = groupbyWorkers(output_dir + workflow_filename, n=1)
+    gpt(output_dir + workflow_filename, groups = groups, tmpdir = './', gpt_args = ['-Dsnap.userdir=.', '-J-Xmx4G']) # -Xmx is unknown and -J.. gets overridden somehow
+    
+    print(listdir("./"))
+    
+    return groups

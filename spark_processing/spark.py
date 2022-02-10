@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     try:
         #Distribute the local file list over the cluster. In Spark terminology, the result is called an RDD (Resilient Distributed Dataset).
-        filesRDD = sc.parallelize(files)
+        filesRDD = sc.parallelize(files) # TODO specify nr of partitions
         #Apply the 'histogram' function to each filename using 'map', keep the result in memory using 'cache'.
         hists = filesRDD.map(do_pyroSAR).cache()
         print(type(hists))
@@ -38,9 +38,7 @@ if __name__ == '__main__':
         #Combine distributed histograms into a single result
         # total = list(hists.reduce(lambda h, i: map(add, h, i)))
         # total = hists.sum()
-        
-        print(hists.collect())
 
-        # print( "sum of rows: %s" % (total) )
+        print( "sum of rows: %s" % (hists.count()) )
     finally:
         sc.stop()

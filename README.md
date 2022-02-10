@@ -755,6 +755,16 @@ Ascending                                         | Descending
 export PATH=$PATH:path/to/snap/bin"
 `
 * job `application_1643116788003_11139` is supposed to return the processing_dicts
+* using $Path lead to the centOS PATH variable being passed to the docker containers, so the SNAP path had to be set in the dockerfile
+* job application_1643116788003_12200 `  File "/usr/local/lib/python3.6/dist-packages/pyroSAR/snap/auxil.py", line 283, in execute
+    raise RuntimeError(submessage.format(out, err, os.path.basename(xmlfile), proc.returncode))
+RuntimeError: org.h2.message.DbException: Log file error: "/home/jonathanbahlmann/.snap/product-library/products.trace.db", cause: "org.h2.message.DbException: Error while creating fi
+le ""/home/jonathanbahlmann"" [90062-197]" [90034-197]
+` maybe because of tmpdir = "./" - no, error persists if changing for "/data"users"... RuntimeError: org.h2.message.DbException:
+
+* `--conf spark.yarn.executorEnv.INSTALL4J_ADD_VM_PARAMS="-Xms2703m -Xmx4096m" \`
+* application_1643116788003_16815 failed with 6G overhead and 2G vm option max
+
 
 ## useful commands
 * `export PROJ_LIB=/usr/share/proj`
