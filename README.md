@@ -776,4 +776,8 @@ le ""/home/jonathanbahlmann"" [90062-197]" [90034-197]
 * 8G overhead and 4G assigned RAM work well together, set -Xmx via gpt like so: `gpt(output_dir + workflow_filename, groups = groups, tmpdir = './', gpt_args = ['-Dsnap.userdir=.', '-J-Xmx4G'])`
 * works! wrote `SNAP_coreg_to_corrected.xml` to check if the coherence results make sense and they do.
 * to check, run `/usr/local/snap/bin/gpt /data/users/Public/jonathanbahlmann/coherence-docs/SNAP_coreg_to_corrected.xml` inside the container `docker run -it -v /data/users/Public/jonathanbahlmann:/data/users/Public/jonathanbahlmann vito-docker.artifactory.vgt.vito.be/esa-snap-gdal:0.0.8 /bin/bash`
-*
+* added checking if the `.dim` file exists, skipping processing if it does
+* apply-orbit-file is not working yet I'm assuming, `ContinueOnFail` is `True`. Not super important but needs fixing for operational pipeline
+
+## Coherence Calculation and Geocoding
+* see [SAR2Cube](https://github.com/SARScripts/openeo_odc_driver), important functions seem to be `aggregate_spatial_window`, `coherence`, `geocoding`, `radar_mask`
