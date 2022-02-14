@@ -8,4 +8,4 @@ def processing_geojson_as_array(bursts_to_process):
     # leave single bursts out of the processing
     combinations = combinations.loc[combinations["sce_min_burst"] != combinations["sce_max_burst"],:]
     
-    return [v for k, v in combinations.loc[:,["id", "ref_scene", "subswath", "sce_min_burst", "sce_max_burst", "ref_min_burst", "ref_max_burst", "processing_status", "path", "ref_path"]].groupby(['id', "ref_scene"])]
+    return [v for k, v in combinations.loc[:,["id", "ref_scene", "subswath", "start", "sce_min_burst", "sce_max_burst", "ref_min_burst", "ref_max_burst", "processing_status", "path", "ref_path"]].groupby(['id', "ref_scene"])]

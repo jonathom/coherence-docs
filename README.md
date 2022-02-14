@@ -9,6 +9,12 @@
 - [] try pyroSAR
 - [] try preprocessing, SAR2Cube
 
+## useful commands
+* `export PROJ_LIB=/usr/share/proj`
+* `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`
+* `gdalwarp -overwrite -t_srs EPSG:32632 coherence_ortho.tif coherence_ortho_32632.tif`
+* local testing data are orbit 146, frame 173, 14.10., 20.10., 26.10., (just for reference)
+
 ## Coherence
 
 "Therefore, the phase noise changes from pixel to pixel due to the different impact of the random noise superposed on the random amplitudes of the pixels. Pixels with weak returns will show more dispersed interferometric phases; strong and stable scatterers will yield more reliable phases. In addition, there are important changes between the two acquisitions: temporal, due to the change in the off-nadir angle, and due to random noise. We now define the measure of this change γ, the coherence of the two SAR images (also called the complex correlation)." Ferretti, 2007.
@@ -749,7 +755,7 @@ Ascending                                         | Descending
 
 * use existing pyroSAR workflow to create on the fly workflow for spark worker nodes
 
-**7.2.22**
+**7.2.22 - 10.2.**
 * iterating over datastructure works
 * `SNAP could not be identified. If you have installed it please add the path to the SNAP executables (bin subdirectory) to the PATH environment. E.g. in the Linux .bashrc file add the following line:
 export PATH=$PATH:path/to/snap/bin"
@@ -761,13 +767,13 @@ export PATH=$PATH:path/to/snap/bin"
 RuntimeError: org.h2.message.DbException: Log file error: "/home/jonathanbahlmann/.snap/product-library/products.trace.db", cause: "org.h2.message.DbException: Error while creating fi
 le ""/home/jonathanbahlmann"" [90062-197]" [90034-197]
 ` maybe because of tmpdir = "./" - no, error persists if changing for "/data"users"... RuntimeError: org.h2.message.DbException:
+* this error was actually just caused by another error in snap and turned up multiple times, e.g. with "not able to cast 1.0 to int", "unknown parameter" etc.
 
 * `--conf spark.yarn.executorEnv.INSTALL4J_ADD_VM_PARAMS="-Xms2703m -Xmx4096m" \`
+* this env variable didnt do much but the overhead one is worth mentioning: `--conf spark.yarn.executor.memoryOverhead=8G \`
 * application_1643116788003_16815 failed with 6G overhead and 2G vm option max
-
-
-## useful commands
-* `export PROJ_LIB=/usr/share/proj`
-* `source /home/petra/OTB-7.4.0-Linux64/otbenv.profile`
-* `gdalwarp -overwrite -t_srs EPSG:32632 coherence_ortho.tif coherence_ortho_32632.tif`
-* local testing data are orbit 146, frame 173, 14.10., 20.10., 26.10., (just for reference)
+* this was due to the fact that 2G was too little ram for SNAP, and the grouping in pyroSAR was disabled. so huge graphs lead to heapspace errors
+* 8G overhead and 4G assigned RAM work well together, set -Xmx via gpt like so: `gpt(output_dir + workflow_filename, groups = groups, tmpdir = './', gpt_args = ['-Dsnap.userdir=.', '-J-Xmx4G'])`
+* works! wrote `SNAP_coreg_to_corrected.xml` to check if the coherence results make sense and they do.
+* to check, run `/usr/local/snap/bin/gpt /data/users/Public/jonathanbahlmann/coherence-docs/SNAP_coreg_to_corrected.xml` inside the container `docker run -it -v /data/users/Public/jonathanbahlmann:/data/users/Public/jonathanbahlmann vito-docker.artifactory.vgt.vito.be/esa-snap-gdal:0.0.8 /bin/bash`
+*
