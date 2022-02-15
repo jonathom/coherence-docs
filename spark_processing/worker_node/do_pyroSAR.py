@@ -5,16 +5,28 @@ def handle_gpd(gdf):
 
 def do_pyroSAR(df):
     
-    from pyroSAR.snap.auxil import parse_recipe, parse_node
-    from pyroSAR.snap.auxil import gpt
-    from pyroSAR.snap.auxil import groupbyWorkers
+    from pyroSAR.snap.auxil import parse_recipe, parse_node, gpt, groupbyWorkers
+    from pyroSAR import identify
     import geopandas as gpd
-    from os import mkdir
+    from os import mkdir, environ
     from os.path import isdir, isfile
 
     root = "/data/users/Public/jonathanbahlmann/spark_results/"
 
-    continueOnFailAOF = True
+    continueOnFailAOF = False
+    
+    pwd = environ["PWD"]
+    osvdir = pwd + "/./auxdata/Orbits/Sentinel-1"
+
+    scene = df.iloc[0]["path"]
+    id = identify(scene)
+    match = id.getOSV(osvdir=osvdir, osvType='RES', returnMatch=True)
+    match = id.getOSV(osvdir=osvdir, osvType='POE', returnMatch=True)
+    
+    ref_scene = df.iloc[0]["ref_path"]
+    ref_id = identify(ref_scene)
+    match = ref_id.getOSV(osvdir=osvdir, osvType='RES', returnMatch=True)
+    match = ref_id.getOSV(osvdir=osvdir, osvType='POE', returnMatch=True)
     
     name = str(df.iloc[0]["id"]) + "_" + df.iloc[0]["ref_scene"] + "_" + str(int(df.iloc[0]["sce_min_burst"])) + "_" + str(int(df.iloc[0]["sce_max_burst"]))
     workflow_filename = "graph_" + name + ".xml"
@@ -205,15 +217,21 @@ def do_pyroSAR(df):
             workflow.insert_node(deb3, before = geocode3.id)
 
             merge_list.append(deb3.id)
-
-        # hope this works even with only one subswath
-        merge = parse_node("TOPSAR-Merge")
-        workflow.insert_node(merge, before = merge_list)
-
-        write = parse_node("Write")
-        write.parameters["file"] = output_dir + out_filename
-        write.parameters["formatName"] = "BEAM-DIMAP"
-        workflow.insert_node(write, before = merge.id)
+            
+        if len(merge_list) > 1:
+            merge = parse_node("TOPSAR-Merge")
+            workflow.insert_node(merge, before = merge_list)
+            
+            write = parse_node("Write")
+            write.parameters["file"] = output_dir + out_filename
+            write.parameters["formatName"] = "BEAM-DIMAP"
+            workflow.insert_node(write, before = merge.id)
+            
+        elif len(merge_list) == 1:
+            write = parse_node("Write")
+            write.parameters["file"] = output_dir + out_filename
+            write.parameters["formatName"] = "BEAM-DIMAP"
+            workflow.insert_node(write, before = merge_list[0])
 
         workflow.write(output_dir + workflow_filename)
 

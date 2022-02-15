@@ -778,6 +778,12 @@ le ""/home/jonathanbahlmann"" [90062-197]" [90034-197]
 * to check, run `/usr/local/snap/bin/gpt /data/users/Public/jonathanbahlmann/coherence-docs/SNAP_coreg_to_corrected.xml` inside the container `docker run -it -v /data/users/Public/jonathanbahlmann:/data/users/Public/jonathanbahlmann vito-docker.artifactory.vgt.vito.be/esa-snap-gdal:0.0.8 /bin/bash`
 * added checking if the `.dim` file exists, skipping processing if it does
 * apply-orbit-file is not working yet I'm assuming, `ContinueOnFail` is `True`. Not super important but needs fixing for operational pipeline
+* error with orbit files is: `Error: [NodeId: Apply-Orbit-File] No valid orbit file found for 12-OCT-2021 05:57:55.000000
+Orbit files may be downloaded from https://qc.sentinel1.eo.esa.int/ or http://aux.sentinel1.eo.esa.int/
+and placed in /data1/hadoop/yarn/local/usercache/jonathanbahlmann/appcache/application_1643116788003_22431/container_e5013_1643116788003_22431_01_000004/./auxdata/Orbits/Sentinel-1/RESORB/S1A/2021/10`
+* this path can be found in the environment variables as `PWD`
+* add POE and RES with pyroSAR for the specific products, fails with `match = ref_id.getOSV(osvdir=osvdir, osvType='RES', returnMatch=True)match = ref_id.getOSV(osvdir=osvdir, osvType='RES', returnMatch=True)`
+* check graph:
 
 ## Coherence Calculation and Geocoding
 * see [SAR2Cube](https://github.com/SARScripts/openeo_odc_driver), important functions seem to be `aggregate_spatial_window`, `coherence`, `geocoding`, `radar_mask`
