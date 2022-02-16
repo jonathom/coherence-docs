@@ -90,7 +90,7 @@ def do_pyroSAR(df):
             # TopSAR Split
             split = parse_node("TOPSAR-Split")
             split.parameters["subswath"] = "IW1"
-            split.parameters["selectedPolarisations"] = ["VV"]
+            split.parameters["selectedPolarisations"] = ["VV", "VH"]
             split.parameters["firstBurstIndex"] = processing_dict["IW1"]["min_ref"]
             split.parameters["lastBurstIndex"] = processing_dict["IW1"]["max_ref"]
             workflow.insert_node(split, before = read.id, resetSuccessorSource = False)
@@ -98,7 +98,7 @@ def do_pyroSAR(df):
             # TopSAR Split 2
             split2 = parse_node("TOPSAR-Split")
             split2.parameters["subswath"] = "IW1"
-            split2.parameters["selectedPolarisations"] = ["VV"]
+            split2.parameters["selectedPolarisations"] = ["VV", "VH"]
             split2.parameters["firstBurstIndex"] = processing_dict["IW1"]["min_sce"]
             split2.parameters["lastBurstIndex"] = processing_dict["IW1"]["max_sce"]
             workflow.insert_node(split2, before = read2.id, resetSuccessorSource = False)
@@ -135,7 +135,7 @@ def do_pyroSAR(df):
             # TopSAR Split
             split3 = parse_node("TOPSAR-Split")
             split3.parameters["subswath"] = "IW2"
-            split3.parameters["selectedPolarisations"] = ["VV"]
+            split3.parameters["selectedPolarisations"] = ["VV", "VH"]
             split3.parameters["firstBurstIndex"] = processing_dict["IW2"]["min_ref"]
             split3.parameters["lastBurstIndex"] = processing_dict["IW2"]["max_ref"]
             workflow.insert_node(split3, before = read.id, resetSuccessorSource = False)
@@ -143,7 +143,7 @@ def do_pyroSAR(df):
             # TopSAR Split 2
             split4 = parse_node("TOPSAR-Split")
             split4.parameters["subswath"] = "IW2"
-            split4.parameters["selectedPolarisations"] = ["VV"]
+            split4.parameters["selectedPolarisations"] = ["VV", "VH"]
             split4.parameters["firstBurstIndex"] = processing_dict["IW2"]["min_sce"]
             split4.parameters["lastBurstIndex"] = processing_dict["IW2"]["max_sce"]
             workflow.insert_node(split4, before = read2.id, resetSuccessorSource = False)
@@ -180,7 +180,7 @@ def do_pyroSAR(df):
             # TopSAR Split
             split5 = parse_node("TOPSAR-Split")
             split5.parameters["subswath"] = "IW3"
-            split5.parameters["selectedPolarisations"] = ["VV"]
+            split5.parameters["selectedPolarisations"] = ["VV", "VH"]
             split5.parameters["firstBurstIndex"] = processing_dict["IW3"]["min_ref"]
             split5.parameters["lastBurstIndex"] = processing_dict["IW3"]["max_ref"]
             workflow.insert_node(split5, before = read.id, resetSuccessorSource = False)
@@ -188,7 +188,7 @@ def do_pyroSAR(df):
             # TopSAR Split 2
             split6 = parse_node("TOPSAR-Split")
             split6.parameters["subswath"] = "IW3"
-            split6.parameters["selectedPolarisations"] = ["VV"]
+            split6.parameters["selectedPolarisations"] = ["VV", "VH"]
             split6.parameters["firstBurstIndex"] = processing_dict["IW3"]["min_sce"]
             split6.parameters["lastBurstIndex"] = processing_dict["IW3"]["max_sce"]
             workflow.insert_node(split6, before = read2.id, resetSuccessorSource = False)
@@ -236,6 +236,6 @@ def do_pyroSAR(df):
         workflow.write(output_dir + workflow_filename)
 
         groups = groupbyWorkers(output_dir + workflow_filename, n=1)
-        gpt(output_dir + workflow_filename, groups = groups, tmpdir = './', gpt_args = ['-Dsnap.userdir=.', '-J-Xmx4G'])
+        gpt(output_dir + workflow_filename, groups = groups, tmpdir = './', gpt_args = ['-Dsnap.userdir=.', '-J-Xmx5G'])
 
         return groups
