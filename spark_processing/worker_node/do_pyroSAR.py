@@ -50,6 +50,7 @@ def do_pyroSAR(df):
     output_dir = output_dir + "/"
     dim_file = output_dir + out_filename + ".dim"
         
+    # test if processing was done already
     if isfile(dim_file):
         print("[MESSAGE]: ", dim_file, " exists. Skipping.")
         pass

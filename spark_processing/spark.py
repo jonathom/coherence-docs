@@ -24,7 +24,7 @@ if __name__ == '__main__':
     sc = SparkContext(appName='python-spark-docker')
     
     # read processing.geojson and create a list of dataframes that need to be processed
-    bursts_to_process = gpd.read_file("/data/users/Public/jonathanbahlmann/coherence-docs/src/processing.geojson")
+    bursts_to_process = gpd.read_file("/data/users/Public/jonathanbahlmann/coherence-docs/reference_scenes/processing.geojson")
     files = processing_geojson_as_array(bursts_to_process)
 
     try:

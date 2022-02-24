@@ -1,4 +1,4 @@
 # Spark Processing
-Preprocess S1 data in docker containers via spark. All bursts (except single bursts) in `/src/processing.geojson` are processed. Steps taken are: split, apply orbit file, back-geocoding, merge, deburst.
+Preprocess S1 data in docker containers via spark. All bursts (except single bursts) in `/reference_scenes/processing.geojson` are processed. Steps taken are: split, apply orbit file, back-geocoding, merge, deburst.
 
-Known issue: **Apply Orbit File is "turned off"** at the moment via the `ContinueOnFail` option set to `True`. For more exact results this needs to be resolved. There are some scripts in this repository that show how to download the orbit files via PyroSAR, since SNAP seems to fail to do so.
+For processing, an image of the `Dockerfile` container must be available (currently at `vito-docker.artifactory.vgt.vito.be/esa-snap-gdal:0.0.8`). `sh run-cluster.sh` must be run from a terrascope command line. As can be seen in `spark.py`, scenes are distributed to worker nodes *by reference scene*. The results will be named `<scene_id>_<reference_id>_<scene_min_burst>_<scene_max_burst>_Stack_deb` and will be in BEAM-DIMAP format. The file doing the heavy lifting is `/worker_node/do_pyroSAR.py`. It creates a pyroSAR workflow based on the bursts given to the function and executes it using pyroSARs `gpt` tool.
