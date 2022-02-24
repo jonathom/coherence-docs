@@ -1,8 +1,3 @@
-def handle_gpd(gdf):
-    import geopandas as gpd
-    
-    return len(gdf)
-
 def do_pyroSAR(df):
     
     from pyroSAR.snap.auxil import parse_recipe, parse_node, gpt, groupbyWorkers
@@ -11,10 +6,13 @@ def do_pyroSAR(df):
     from os import mkdir, environ
     from os.path import isdir, isfile
 
+    # result dir
     root = "/data/users/Public/jonathanbahlmann/spark_results/"
 
+    # SNAP attribute saying if the execution should continue if no orbit files are found for the scenes
     continueOnFailAOF = False
     
+    # getting the orbit files via pyroSAR, SNAP is kinda weird about this
     pwd = environ["PWD"]
     osvdir = pwd + "/./auxdata/Orbits/Sentinel-1"
 
@@ -27,15 +25,18 @@ def do_pyroSAR(df):
     ref_id = identify(ref_scene)
     match = ref_id.getOSV(osvdir=osvdir, osvType='RES', returnMatch=True)
     match = ref_id.getOSV(osvdir=osvdir, osvType='POE', returnMatch=True)
-    
+
+    # create a name and all sorts of output names, output directories etc.
+    # sorry for not using Path but it would've been an extra dependency to install
     name = str(df.iloc[0]["id"]) + "_" + df.iloc[0]["ref_scene"] + "_" + str(int(df.iloc[0]["sce_min_burst"])) + "_" + str(int(df.iloc[0]["sce_max_burst"]))
     workflow_filename = "graph_" + name + ".xml"
     out_filename = name + "_Stack_deb"
     
+    # output dirs are organized as the archive is, i.e. /year/month/day
     year = df.iloc[0]["start"][0:4]
     month = df.iloc[0]["start"][4:6]
     day = df.iloc[0]["start"][6:8]
-    
+
     if not isdir(root + year):
         mkdir(root + year)
     if not isdir(root + year + "/" + month):
@@ -55,11 +56,12 @@ def do_pyroSAR(df):
         print("[MESSAGE]: ", dim_file, " exists. Skipping.")
         pass
     else:
-        # each of these frames that I get here are similar to the pyroXX_workflow.py
+        # create a dict that will contain processing info
         processing_dict = {"IW1": {"min_sce": None, "max_sce": None, "min_ref": None, "max_ref": None}, 
                            "IW2": {"min_sce": None, "max_sce": None, "min_ref": None, "max_ref": None}, 
                            "IW3": {"min_sce": None, "max_sce": None, "min_ref": None, "max_ref": None}}
 
+        # fill it with info from the input gpd
         for i, row in df.iterrows():
             swath = row["subswath"]
             processing_dict[swath]["min_sce"] = int(row["sce_min_burst"])
@@ -67,6 +69,7 @@ def do_pyroSAR(df):
             processing_dict[swath]["min_ref"] = int(row["ref_min_burst"])
             processing_dict[swath]["max_ref"] = int(row["ref_max_burst"])
 
+        # workflow shall be the SNAP process graph that will be executed in the end
         workflow = parse_recipe('blank')
 
         # reference
@@ -81,7 +84,12 @@ def do_pyroSAR(df):
         read2.parameters["formatName"] = "SENTINEL-1"
         workflow.insert_node(read2)
 
+        # we need a merge_list to be able to merge subswaths in the end
         merge_list = []
+
+        # going through each subswath, checking if processing needs to be done
+        # if yes, the nodes are added to workflow
+        # steps are split, apply orbit file, coregistration (back-geocoding), deburst
 
         # check IW1, empty?
         if processing_dict["IW1"]["max_sce"] is None or processing_dict["IW1"]["max_ref"] is None:
@@ -219,6 +227,7 @@ def do_pyroSAR(df):
 
             merge_list.append(deb3.id)
             
+        # do merge if there are subswaths to merge
         if len(merge_list) > 1:
             merge = parse_node("TOPSAR-Merge")
             workflow.insert_node(merge, before = merge_list)
@@ -227,16 +236,23 @@ def do_pyroSAR(df):
             write.parameters["file"] = output_dir + out_filename
             write.parameters["formatName"] = "BEAM-DIMAP"
             workflow.insert_node(write, before = merge.id)
-            
+
+        # don't merge if only one subswath was processed
         elif len(merge_list) == 1:
             write = parse_node("Write")
             write.parameters["file"] = output_dir + out_filename
             write.parameters["formatName"] = "BEAM-DIMAP"
             workflow.insert_node(write, before = merge_list[0])
 
+        # write the workflow xml to the output directory
         workflow.write(output_dir + workflow_filename)
 
+        # create groups, this is really the beauty of pyroSAR.
+        # without groups, SNAP would use way too much memory and crash or be super slow
         groups = groupbyWorkers(output_dir + workflow_filename, n=1)
+
+        # execute with gpt, give '-J-Xmx5G' for a max RAM of 5G
         gpt(output_dir + workflow_filename, groups = groups, tmpdir = './', gpt_args = ['-Dsnap.userdir=.', '-J-Xmx5G'])
 
+        # This wouldn't need to return anything actually
         return groups
