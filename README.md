@@ -17,3 +17,17 @@ This is the outcome of an internship. The goal was to investigate a possible on-
 
 1. consult `/preprocessing` readme for more info on getting started there. Two things are needed: a `reference_bursts.geojson` with the reference scenes and a `processing.geojson` with all bursts that shall be processed.
 2. consult `/spark_processing` readme and run `sh spark_processing/run-cluster.sh`. 
+
+### Calculating Coherence
+
+* The coregistered products actually don't need their reference imagery anymore, so all `<i/q>_<VV/VH>_mst_<date>.img` or the likes can be deleted
+* coherence can then be calculated as shown in `coherence.ipynb`:
+  * load `i` and `q` bands of two dates
+  * in this case, S1A scenes were used to ensure that pixels were overlapping. Usually, this would require a process involving geographic location related to the `.img` files
+  * following SAR2Cube: calculate complex coherence, aggregate over spatial window, calculate intensity
+* terrain-correction is still missing
+
+So here is the outcome, a coherence calculated over images that were coregistered to a *common* reference and not to each other:
+**Intensity** | **Coherence**
+:--:|:--:
+![](./img/intensity.png) | ![](./img/coherence.png)
