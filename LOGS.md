@@ -787,3 +787,9 @@ and placed in /data1/hadoop/yarn/local/usercache/jonathanbahlmann/appcache/appli
 
 ## Coherence Calculation and Geocoding
 * see [SAR2Cube](https://github.com/SARScripts/openeo_odc_driver), important functions seem to be `aggregate_spatial_window`, `coherence`, `geocoding`, `radar_mask`
+* using Xarray, coherence as in SAR2Cube was implemented (see `coherence.ipynb`)
+* coherence between S1A 21.06.2021 and S1A 03.07.2021
+
+**Intensity** | **Coherence**
+:--:|:--:
+![](./img/intensity.png) | ![](./img/coherence.png)
