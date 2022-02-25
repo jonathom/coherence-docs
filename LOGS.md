@@ -790,6 +790,10 @@ and placed in /data1/hadoop/yarn/local/usercache/jonathanbahlmann/appcache/appli
 * using Xarray, coherence as in SAR2Cube was implemented (see `coherence.ipynb`)
 * coherence between S1A 21.06.2021 and S1A 03.07.2021
 
-**Intensity** | **Coherence**
+**Xarray Intensity** | **Xarray Coherence**
 :--:|:--:
 ![](./img/intensity.png) | ![](./img/coherence.png)
+**Terrascope GRD** | **Terrascope Coherence**
+![](./img/maastricht_terrascope_GRD.png) | ![](./img/maastricht_terrascope_coherence.png)
+<...> | SNAP coherence
+<...> | ![](./img/maastricht_SNAP_coherence.png)
